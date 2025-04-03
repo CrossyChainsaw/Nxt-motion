@@ -1316,3 +1316,9 @@ tr:hover {
     left: 100%;
   }
 }
+const gif = document.getElementById('success-gif');
+gif.classList.add('show');
+
+setTimeout(() => {
+  gif.classList.remove('show');
+}, 5000);
