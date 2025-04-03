@@ -198,39 +198,57 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  document.addEventListener("DOMContentLoaded", function () {
-    const contactForm = document.querySelector('.contact-form');
-  
-    // Popup aanmaken
-    const thankYouPopup = document.createElement('div');
-    thankYouPopup.className = "thank-you-popup fade-in";
-    thankYouPopup.style.display = "none";
-  
-    const message = document.createElement('p');
-    message.textContent = "✅ Je bericht is succesvol verzonden!";
-    thankYouPopup.appendChild(message);
-  
-    const closeButton = document.createElement('button');
-    closeButton.textContent = "Sluiten";
-    closeButton.className = "close-popup";
-    closeButton.addEventListener('click', () => {
-      thankYouPopup.style.display = "none";
-    });
-  
-    thankYouPopup.appendChild(closeButton);
-    document.body.appendChild(thankYouPopup);
-  
-    // Form afhandeling
-    contactForm.addEventListener('submit', function () {
-      setTimeout(() => {
-        contactForm.reset();
-        thankYouPopup.style.display = "block";
 
-        // Automatisch sluiten na 5 seconden
-        setTimeout(() => {
-          thankYouPopup.style.display = "none";
-        }, 5000);
-      }, 500);
-    });
+  document.addEventListener("DOMContentLoaded", function () {
+  const contactForm = document.querySelector('.contact-form');
+
+  // Popup aanmaken
+  const thankYouPopup = document.createElement('div');
+  thankYouPopup.className = "thank-you-popup";
+  thankYouPopup.style.display = "none";
+
+  const message = document.createElement('p');
+  message.textContent = "✅ Je bericht is succesvol verzonden!";
+  thankYouPopup.appendChild(message);
+
+  // 🎥 GIF toevoegen
+  const gif = document.createElement('img');
+  gif.src = "resources/spongebob-dancing.gif";
+  gif.alt = "Verzonden";
+  gif.className = "popup-gif";
+  thankYouPopup.appendChild(gif);
+
+  // ❌ Sluitknop
+  const closeButton = document.createElement('button');
+  closeButton.textContent = "Sluiten";
+  closeButton.className = "close-popup";
+  closeButton.addEventListener('click', () => {
+    thankYouPopup.classList.remove('fade-in');
+    thankYouPopup.classList.add('fade-out');
+    setTimeout(() => {
+      thankYouPopup.style.display = "none";
+    }, 500);
   });
-  
+
+  thankYouPopup.appendChild(closeButton);
+  document.body.appendChild(thankYouPopup);
+
+  // Form afhandeling
+  contactForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    contactForm.reset();
+
+    thankYouPopup.style.display = "block";
+    thankYouPopup.classList.remove('fade-out');
+    thankYouPopup.classList.add('fade-in');
+
+    // Automatisch sluiten na 5 seconden
+    setTimeout(() => {
+      thankYouPopup.classList.remove('fade-in');
+      thankYouPopup.classList.add('fade-out');
+      setTimeout(() => {
+        thankYouPopup.style.display = "none";
+      }, 500);
+    }, 5000);
+  });
+});
