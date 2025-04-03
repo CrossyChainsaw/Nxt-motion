@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Nxt Motion</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigatiebalk -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <img src="nxtmotion-text.png" alt="Nxt Motion" class="logo-text">
+        </div>
+        <ul class="nav-menu">
+            <li onclick="showSection('home')">🏠 Home</li>
+            <li onclick="showSection('options')">🔓 Verborgen Opties</li>
+            <li onclick="showSection('diagnosis')">🛠 Diagnose</li>
+            <li onclick="showSection('about')">👤 Wie zijn wij</li>
+            <li onclick="showSection('contact')">✉️ Contact</li>
+        </ul>
+        
+    </nav>
+
+<!-- Hero Video Sectie -->
+<div class="video-container" id="home">
+  <video autoplay muted loop class="bg-video">
+      <source src="jouw-video.mp4" type="video/mp4">
+  </video>
+  <div class="overlay">
+      <div class="content">
+          <h2>YOUR VEHICLE, OUR PASSION.</h2>
+          <h3>Wat kunnen wij voor je betekenen? 🚀</h3>
+          <div class="buttons">
+              <button onclick="showSection('options')">🔓 Verborgen opties ontgrendelen</button>
+              <button onclick="showSection('diagnosis')">🔧 Diagnose & foutcodes oplossen</button>
+          </div>
+      </div>
+
+      <!-- Fade effect wordt HIER over de onderkant van de video gelegd -->
+      <div class="fade-overlay"></div>
+  </div>
+</div>
+
+
+ <!-- Verborgen Opties Sectie -->
+<section id="options" class="section hidden">
+  <h3>🔓 Verborgen Opties Ontgrendelen</h3>
+
+  <div class="section-divider animated-line"></div>
+    
+  <p class="intro-text">Wil jij méér uit je auto halen? Ontdek wat er écht mogelijk is.</p>
+
+
+
+
+  <!-- Comfort & Gebruiksgemak -->
+  <div class="option-category comfort">
+    <h4 onclick="toggleOptions(this)">Comfort & Gebruiksgemak</h4>
+    <div class="option-list hidden">
+      <div class="option-box"><strong>Automatisch inklappen van spiegels</strong><br>Spiegels klappen in bij vergrendeling – <span>€ 20</span></div>
+      <div class="option-box"><strong>Mirror dip</strong><br>Spiegel verlaagd in Reverse – <span>€ 15</span></div>
+      <div class="option-box"><strong>Traffic sign recognition</strong><br>TSR in HUD – <span>€ 20</span></div>
+      <div class="option-box"><strong>Coming/Leaving Home verlichting aanpassen</strong><br>Automatische verlichting bij openen/sluiten van de auto – <span>€ 15</span></div>
+      <div class="option-box"><strong>Acoustisch lock/unlock</strong><br>Claxonneert bij vergrendelen/ontgrendelen – <span>€ 15</span></div>
+      <div class="option-box"><strong>Central lock IGN</strong><br>Vergrendelen met IGN – <span>€ 20</span></div>
+      <div class="option-box"><strong>Comfort windows</strong><br>Open/sluit ramen met sleutel – <span>€ 20</span></div>
+      <div class="option-box"><strong>Start/Stop-systeem uitschakelen</strong><br>Permanent uitschakelen – <span>€ 20</span></div>
+      <div class="option-box"><strong>Gordelwaarschuwing activeren/deactiveren</strong><br>Piepsignaal in-/uitschakelen – <span>€ 15</span></div>
+      <div class="option-box"><strong>Service reset</strong><br>Datum/km service reset – <span>€ 15</span></div>
+      <div class="option-box"><strong>Comfort knipperlicht aanpassen</strong><br>Aantal knipperingen instellen – <span>€ 15</span></div>
+    </div>
+  </div>
+
+  <!-- Verlichting & Exterieur -->
+  <div class="option-category verlichting">
+    <h4 onclick="toggleOptions(this)">Verlichting & Exterieur</h4>
+    <div class="option-list hidden">
+      <div class="option-box"><strong>Mistlampen als bochtverlichting</strong><br>Mistlampen gaan aan in bochten – <span>€ 15</span></div>
+      <div class="option-box"><strong>Achterlichten als dagrijverlichting</strong><br>Altijd brandend als DRL – <span>€ 20</span></div>
+    </div>
+  </div>
+
+  <!-- Multimedia & Navigatie -->
+  <div class="option-category multimedia">
+    <h4 onclick="toggleOptions(this)">Multimedia & Navigatie</h4>
+    <div class="option-list hidden">
+      <div class="option-box"><strong>Video in Motion (VIM)</strong><br>Video afspelen tijdens het rijden – <span>€ 30</span></div>
+      <div class="option-box"><strong>Display upgrade</strong><br>Sport display stijlen toevoegen – <span>€ 25</span></div>
+      <div class="option-box"><strong>Sfeerverlichting uitbreiden</strong><br>Van 10 kleuren naar 30 – <span>€ 25</span></div>
+      <div class="option-box"><strong>Navigatie POI’s & flitspalen</strong><br>Snelheidswaarschuwingen & nuttige plaatsen – <span>€ 25</span></div>
+    </div>
+  </div>
+
+  <!-- Prestaties & Sportieve Functies -->
+  <div class="option-category prestaties">
+    <h4 onclick="toggleOptions(this)">Prestaties & Sportieve Functies</h4>
+    <div class="option-list hidden">
+      <div class="option-box"><strong>Extra rij-modi activeren</strong><br>Eco, Comfort, Sport, Race modi – <span>€ 30</span></div>
+      <div class="option-box"><strong>Sweeping needle</strong><br>Tachometer wijzers draaien bij opstart – <span>€ 15</span></div>
+    </div>
+  </div>
+
+  <!-- Interesse CTA -->
+  <div class="info-box">
+    <h4><span class="emoji">📲</span> <span class="highlight-orange">Interesse?</span></h4>
+    <p>Stuur ons gerust een berichtje en wij helpen je snel verder!</p>
+    <p><span class="emoji">📍</span> <em>Locatie: Eindhoven</em></p>
+    <a href="#contact" class="cta-button">→ Ontgrendel jouw opties</a>
+  </div>
+  
+</section>
+
+    
+    
+    
+    <!-- Diagnose Sectie -->
+    <section id="diagnosis" class="section hidden diagnosis-section">
+      <div class="diagnosis-wrapper">
+        <h3 class="scanner-title">🛠 Diagnose & Foutcodes Oplossen</h3>
+    
+        <div class="diag-box fade-in">
+          <p>Heb je last van een storingslampje op je dashboard of een foutmelding in je auto?<br>
+          Bij <strong>NXT Motion</strong> kun je terecht voor uitlezen en oplossen van foutcodes – snel, transparant en zonder dure garagekosten.</p>
+        </div>
+    
+        <div class="diag-box fade-in">
+          <h4>🔍 Wat we voor je doen</h4>
+          <ul>
+            <li>✔️ Foutcodes uitlezen (alle merken)</li>
+            <li>✔️ Storingen analyseren en resetten (indien mogelijk)</li>
+            <li>✔️ Uitleg over wat er aan de hand is</li>
+            <li>✔️ Oplossing of advies op maat</li>
+            <li>✔️ Elektronica controleren en kleine reparaties uitvoeren</li>
+          </ul>
+        </div>
+    
+        <div class="diag-box fade-in">
+          <h4>⚠️ Veelvoorkomende meldingen</h4>
+          <ul>
+            <li>– Check engine lampje</li>
+            <li>– ABS/ESP storingen</li>
+            <li>– Airbag lampje</li>
+            <li>– Sensor- of bedradingproblemen</li>
+            <li>– EGR/DPF foutmeldingen (diesel)</li>
+          </ul>
+        </div>
+    
+        <div class="diag-box fade-in">
+          <h4>💶 Prijzen</h4>
+          <ul>
+            <li><strong>Foutcode uitlezen + uitleg:</strong> €25</li>
+            <li><strong>Foutcode resetten (indien mogelijk):</strong> €30</li>
+            <li><strong>Kleine reparatie of reset op locatie:</strong> vanaf €50</li>
+          </ul>
+        </div>
+    
+        <div class="diag-box fade-in">
+          <h4>⏱ Klaar terwijl je wacht</h4>
+          <p>In de meeste gevallen is je auto binnen 10-15 minuten weer klaar. Je weet direct waar je aan toe bent.</p>
+        </div>
+    
+        <div class="diag-box fade-in diag-cta">
+          <h4>📲 Interesse?</h4>
+          <p>Stuur ons een WhatsApp-bericht of neem telefonisch contact met ons op.</p>
+          <p class="diag-location">📍 Locatie: Eindhoven</p>
+          <a href="#contact" class="diag-button">→ Laat je storing nu checken</a>
+        </div>
+      </div>
+    </section>
+    
+      
+    
+      <!-- Wie zijn wij Sectie -->
+      <section id="about" class="section hidden">
+        <h3>👤 Wie zijn wij?</h3>
+        <p>Welkom bij <strong>NXT Motion</strong> – dé plek waar passie voor auto’s en vakmanschap samenkomen! Wij zijn <strong>Imran</strong> en <strong>Bilal</strong>, twee vrienden met een gedeelde droom: het verkopen van kwalitatieve en betrouwbare auto’s tegen eerlijke prijzen. Wat begon als een hobby, is inmiddels uitgegroeid tot een serieuze onderneming waarbij we ons continu blijven ontwikkelen.</p>
+
+        <p>Bij NXT Motion draait alles om transparantie, kwaliteit en passie. Wij geloven dat een auto meer is dan alleen een vervoermiddel – het is een beleving. Daarom doen we er alles aan om onze klanten niet alleen een mooie auto te bieden, maar ook een uitstekende service en eerlijk advies.</p>
+
+        <p>Onze focus ligt op het inkopen en verkopen van auto’s die zowel in uitstekende staat verkeren als aantrekkelijk geprijsd zijn. Daarnaast bieden we unieke diensten aan, zoals het ontgrendelen van verborgen opties en het personaliseren van voertuigen. Alles wat we doen, doen we met oog voor detail en een passie voor techniek.</p>
+
+        <p>We begrijpen dat de autowereld soms overweldigend kan zijn, en daarom staan wij altijd klaar om te helpen en te adviseren. Of je nu op zoek bent naar je volgende auto of meer uit je huidige auto wilt halen, bij <strong>NXT Motion</strong> ben je aan het juiste adres.</p>
+
+        <p>Volg onze reis via social media en blijf op de hoogte van onze nieuwste aankopen, verbeterprojecten en updates. Heb je vragen of wil je meer weten? Neem gerust contact met ons op – we helpen je graag verder!</p>
+
+        <h4>NXT Motion – Driven by Passion, Powered by Quality</h4>
+    </section>
+
+<!-- Contact Sectie -->
+<section id="contact" class="section hidden contact-section">
+  <div class="contact-wrapper">
+
+    <h3 class="contact-title">✉️ Neem contact met ons op</h3>
+
+    <div class="contact-options fade-in">
+      <a href="https://wa.me/31617152916" target="_blank" class="contact-button whatsapp">
+        💬 Stuur een WhatsApp
+      </a>
+      <a href="tel:+31617152916" class="contact-button call">
+        📞 Bel ons!
+      </a>
+      <a href="https://www.tiktok.com/@nxtmotion" target="_blank" class="contact-button tiktok">
+        🎵 TikTok
+      </a>
+      <a href="https://www.instagram.com/nxtmotion" target="_blank" class="contact-button instagram">
+        📸 Instagram
+      </a>
+      <a href="https://snapchat.com/t/bX2xq0RN" target="_blank" class="contact-button snapchat">
+        👻 Snapchat
+      </a>
+    </div>
+    
+     
+
+<!-- Custom Formulier gekoppeld aan Google Forms -->
+<div class="custom-form-wrapper fade-in">
+  <h4>📝 Laat hier je bericht achter</h4>
+  <p>Heb je vragen, suggesties of wil je direct geholpen worden? Vul onderstaand formulier in en wij nemen zo snel mogelijk contact met je op!</p>
+
+  <form action="https://docs.google.com/forms/d/e/1FAIpQLSe-ukVm7FYcgw5YB83A6K9yg-KPI1FDRmk5WU7wolJAp7RnTw/formResponse" method="POST" target="hidden_iframe" onsubmit="submitted=true;" class="contact-form">
+    <input type="text" name="entry.385808785" placeholder="Jouw naam" required />
+    <input type="tel" name="entry.805053122" placeholder="Jouw telefoonnummer" required />
+    <textarea name="entry.1440761103" placeholder="Je bericht..." required></textarea>
+    <button type="submit">➡️ Verstuur bericht</button>
+  </form>
+
+  <iframe name="hidden_iframe" style="display:none;"></iframe>
+</div>
+
+    <p class="contact-location fade-in">📍 Wij zijn gevestigd in Eindhoven</p>
+  </div>
+</section>
+
+    <footer class="footer">
+        <p>© 2025 Nxt Motion - Your Vehicle, Our Passion.</p>
+    </footer>
+
+    <script src="script.js"></script>
+    <div id="contact-popup" class="contact-popup">
+      <p>Vragen? <button onclick="showSection('contact')">Contact</button></p>
+    </div>    
+</body>
+</html>
