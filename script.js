@@ -198,8 +198,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  document.addEventListener("DOMContentLoaded", function () {
-    const contactForm = document.querySelector('.contact-form');
+  document.addEventListener("DOMContentLoaded", () => {
+    const contactForm = document.getElementById("contact-form");
   
     // Popup aanmaken
     const thankYouPopup = document.createElement('div');
@@ -215,27 +215,32 @@ document.addEventListener('DOMContentLoaded', () => {
     closeButton.className = "close-popup";
     closeButton.addEventListener('click', () => {
       thankYouPopup.style.display = "none";
+      gif.classList.remove('show'); // Verberg ook de gif
     });
   
     thankYouPopup.appendChild(closeButton);
     document.body.appendChild(thankYouPopup);
+  
+    // SpongeBob GIF aanmaken
+    const gif = document.createElement('div');
+    gif.id = 'success-gif';
+    gif.className = 'gif-popup hidden';
+    gif.innerHTML = '<img src="resources/spongebob-dancing.gif" alt="Success">';
+    document.body.appendChild(gif);
   
     // Form afhandeling
     contactForm.addEventListener('submit', function () {
       setTimeout(() => {
         contactForm.reset();
         thankYouPopup.style.display = "block";
-
-        // Automatisch sluiten na 5 seconden
+        gif.classList.add('show');
+  
+        // Automatisch verbergen na 5 sec
         setTimeout(() => {
           thankYouPopup.style.display = "none";
+          gif.classList.remove('show');
         }, 5000);
       }, 500);
     });
   });
-  const gif = document.getElementById('success-gif');
-gif.classList.add('show');
-
-setTimeout(() => {
-  gif.classList.remove('show');
-}, 5000);
+  
