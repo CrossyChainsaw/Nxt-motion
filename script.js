@@ -198,37 +198,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-
-  document.addEventListener("DOMContentLoaded", () => {
-    const contactForm = document.getElementById("contact-form");
+  document.addEventListener("DOMContentLoaded", function () {
+    const contactForm = document.querySelector('.contact-form');
   
-    // GIF popup
-    const gif = document.createElement('img');
-    gif.src = "resources/spongebob-dancing-fast.gif";
-    gif.id = "success-gif";
-    gif.style.display = "none";
-    gif.style.position = "fixed";
-    gif.style.bottom = "50px";
-    gif.style.left = "50%";
-    gif.style.transform = "translateX(-50%)";
-    gif.style.width = "150px";
-    gif.style.opacity = "0.8";
-    gif.style.zIndex = "9999";
-    document.body.appendChild(gif);
-  
-    // Bedank-popup
-    const thankYouPopup = document.createElement("div");
+    // Popup aanmaken
+    const thankYouPopup = document.createElement('div');
     thankYouPopup.className = "thank-you-popup fade-in";
     thankYouPopup.style.display = "none";
   
-    const message = document.createElement("p");
+    const message = document.createElement('p');
     message.textContent = "✅ Je bericht is succesvol verzonden!";
     thankYouPopup.appendChild(message);
   
-    const closeButton = document.createElement("button");
+    const closeButton = document.createElement('button');
     closeButton.textContent = "Sluiten";
     closeButton.className = "close-popup";
-    closeButton.addEventListener("click", () => {
+    closeButton.addEventListener('click', () => {
       thankYouPopup.style.display = "none";
     });
   
@@ -236,22 +221,14 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.appendChild(thankYouPopup);
   
     // Form afhandeling
-    contactForm.addEventListener("submit", function () {
+    contactForm.addEventListener('submit', function () {
       setTimeout(() => {
         contactForm.reset();
-  
-        // Laat het formulier uitfaden
-        contactForm.classList.add("fade-out");
-  
-        // Toon popup en gif
         thankYouPopup.style.display = "block";
-        gif.style.display = "block";
-  
-        // Na 5 sec alles weer weg, en formulier weer terug
+
+        // Automatisch sluiten na 5 seconden
         setTimeout(() => {
           thankYouPopup.style.display = "none";
-          gif.style.display = "none";
-          contactForm.classList.remove("fade-out");
         }, 5000);
       }, 500);
     });
