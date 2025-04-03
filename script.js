@@ -233,4 +233,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 500);
     });
   });
-  
+  const gif = document.getElementById('success-gif');
+gif.classList.add('show');
+
+setTimeout(() => {
+  gif.classList.remove('show');
+}, 5000);
