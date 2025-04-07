@@ -219,14 +219,20 @@
   <h4>📝 Laat hier je bericht achter</h4>
   <p>Heb je vragen, suggesties of wil je direct geholpen worden? Vul onderstaand formulier in en wij nemen zo snel mogelijk contact met je op!</p>
 
-  <form action="https://docs.google.com/forms/d/e/1FAIpQLSe-ukVm7FYcgw5YB83A6K9yg-KPI1FDRmk5WU7wolJAp7RnTw/formResponse" method="POST" target="hidden_iframe" onsubmit="submitted=true;" class="contact-form">
-    <input type="text" name="entry.385808785" placeholder="Jouw naam" required />
-    <input type="tel" name="entry.805053122" placeholder="Jouw telefoonnummer" required />
-    <textarea name="entry.1440761103" placeholder="Je bericht..." required></textarea>
-    <button type="submit">➡️ Verstuur bericht</button>
-  </form>
+  <form action="https://docs.google.com/forms/d/e/1FAIpQLSe-ukVm7FYcgw5YB83A6K9yg-KPI1FDRmk5WU7wolJAp7RnTw/formResponse"
+  method="POST"
+  target="hidden_iframe"
+  id="contact-form"
+  onsubmit="submitted=true;">
 
-  <iframe name="hidden_iframe" style="display:none;"></iframe>
+<input type="text" name="entry.385808785" placeholder="Jouw naam" required class="styled-input">
+<input type="tel" name="entry.805053122" placeholder="Jouw telefoonnummer" required class="styled-input">
+<textarea name="entry.1440761103" placeholder="Je bericht..." required class="styled-input"></textarea>
+<button type="submit" class="cta-button">➡️ Verstuur bericht</button>
+</form>
+
+<iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+
 </div>
 
     <p class="contact-location fade-in">📍 Wij zijn gevestigd in Eindhoven</p>

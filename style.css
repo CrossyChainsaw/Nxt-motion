@@ -1437,3 +1437,28 @@ tr:hover {
   from { opacity: 1; transform: translateY(0); }
   to { opacity: 0; transform: translateY(30px); }
 }
+/* Zorg dat je inputvelden en textarea er netjes uitzien */
+.styled-input {
+  width: 100%;
+  padding: 12px 15px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: inherit;
+}
+
+/* Verstuurknop in jouw stijl */
+.cta-button {
+  background: linear-gradient(to right, #ff6a00, #ee0979);
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+.cta-button:hover {
+  background: linear-gradient(to right, #ee0979, #ff6a00);
+}

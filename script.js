@@ -187,16 +187,6 @@ document.addEventListener("DOMContentLoaded", () => {
     homeBtn?.addEventListener("click", resetPopupToStart);
     logoBtn?.addEventListener("click", resetPopupToStart);
 });
-document.addEventListener('DOMContentLoaded', () => {
-    const contactForm = document.getElementById('contact-form');
-    if (contactForm) {
-      contactForm.addEventListener('submit', function (e) {
-        e.preventDefault();
-        alert("Bedankt! Je bericht is verstuurd. 🚀");
-        contactForm.reset();
-      });
-    }
-  });
 
 
   document.addEventListener("DOMContentLoaded", function () {
@@ -235,7 +225,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Form afhandeling
   contactForm.addEventListener('submit', function (e) {
-    e.preventDefault();
     contactForm.reset();
 
     thankYouPopup.style.display = "block";
@@ -252,3 +241,31 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 5000);
   });
 });
+window.addEventListener("load", () => {
+    const form = document.getElementById("contact-form");
+    const iframe = document.getElementById("hidden_iframe");
+  
+    if (form && iframe) {
+      // Zorg ervoor dat we pas resetten ná het verzenden
+      iframe.onload = () => {
+        // Form resetten
+        form.reset();
+  
+        // Popup tonen (optioneel, pas aan indien je een eigen animatie gebruikt)
+        const popup = document.querySelector(".thank-you-popup");
+        if (popup) {
+          popup.style.display = "block";
+          popup.classList.add("fade-in");
+          setTimeout(() => {
+            popup.classList.remove("fade-in");
+            popup.classList.add("fade-out");
+            setTimeout(() => {
+              popup.style.display = "none";
+              popup.classList.remove("fade-out");
+            }, 500);
+          }, 5000);
+        }
+      };
+    }
+  });
+  
