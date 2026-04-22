@@ -536,14 +536,19 @@ footer{border-top:1px solid var(--border);padding:32px 40px;display:flex;justify
         </div>
         <div class="form-group"><label>Prijs (€)</label><input type="number" id="aPrice" placeholder="15000" min="0" inputmode="numeric"></div>
         <div class="form-group full">
-          <label>Foto uploaden</label>
-          <div class="upload-area">
-            <input type="file" id="photoFile" accept="image/*" onchange="handleUpload()">
-            <div class="upload-area-text">📷 Klik of sleep een foto hierheen<br><span>JPG, PNG, WEBP — max 10MB</span></div>
+          <label>Foto's — <span id="newCarPhotoCount">0</span>/10 toegevoegd</label>
+          <div id="newCarPhotoList" style="margin-bottom:8px;"><div style="color:var(--muted);font-size:12px;padding:4px 0;">Nog geen foto's toegevoegd</div></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <div class="upload-area" style="flex:1;min-width:160px;padding:14px;">
+              <input type="file" id="photoFile" accept="image/*" onchange="handleUpload()">
+              <div class="upload-area-text">📷 Upload foto<br><span>JPG, PNG, WEBP</span></div>
+            </div>
+            <div style="flex:1;min-width:160px;display:flex;flex-direction:column;gap:6px;">
+              <input type="url" id="aImg" placeholder="of plak URL..." oninput="previewImg()" autocomplete="off" style="flex:1;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;">
+              <button onclick="addNewCarPhotoUrl()" style="background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:10px;border-radius:6px;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;">+ Voeg URL toe</button>
+            </div>
           </div>
           <div class="upload-progress" id="uploadProgress"></div>
-          <div style="font-size:12px;color:var(--muted);margin-top:8px;">Of plak een directe URL:</div>
-          <input type="url" id="aImg" placeholder="https://i.imgur.com/..." oninput="previewImg()" autocomplete="off" style="margin-top:6px;">
         </div>
       </div>
       <div class="img-preview" id="imgPreview">Geen foto — upload een bestand of voeg een URL toe</div>
@@ -674,11 +679,28 @@ function carCardHTML(car){
   </div>`;
 }
 
+function detailSlide(i){
+  const allImgs=window._detailImgs||[];
+  const img=document.getElementById('detailSlideImg');
+  if(img)img.src=allImgs[i]||'';
+  document.querySelectorAll('[id^="dthumb-"]').forEach((el,idx)=>{
+    el.style.borderColor=idx===i?'var(--accent1)':'var(--border)';
+  });
+}
+
 function renderDetail(id){
   const car=cars.find(c=>c.id===id);if(!car)return;
-  const imgBlock=car.img
-    ?`<div class="detail-img"><img src="${car.img}" alt="${car.make} ${car.model}" onerror="this.parentElement.innerHTML='${svgPh()}'"></div>`
-    :`<div class="detail-img">${svgPh()}</div>`;
+  const imgs=Array.isArray(car.imgs)&&car.imgs.length?car.imgs:(car.img?[car.img]:[]);
+  window._detailImgs=imgs;
+  let imgBlock;
+  if(!imgs.length){
+    imgBlock=`<div class="detail-img">${svgPh()}</div>`;
+  } else if(imgs.length===1){
+    imgBlock=`<div class="detail-img"><img src="${imgs[0]}" alt="${car.make}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='${svgPh()}'"></div>`;
+  } else {
+    const thumbs=imgs.map((u,i)=>`<div onclick="detailSlide(${i})" id="dthumb-${i}" style="width:56px;height:40px;border-radius:5px;overflow:hidden;border:2px solid ${i===0?'var(--accent1)':'var(--border)'};cursor:pointer;flex-shrink:0;"><img src="${u}" style="width:100%;height:100%;object-fit:cover;"></div>`).join('');
+    imgBlock=`<div><div class="detail-img" style="margin-bottom:10px;"><img id="detailSlideImg" src="${imgs[0]}" alt="${car.make}" style="width:100%;height:100%;object-fit:cover;" onerror="this.src=''"></div><div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;">${thumbs}</div></div>`;
+  }
   const soldNote=car.sold?`<div style="background:#3a1a1a;border:1px solid #5a2a2a;color:#e07070;padding:12px 16px;border-radius:8px;font-size:14px;margin-bottom:18px;">Deze auto is al verkocht. Bekijk ons andere aanbod of neem contact op.</div>`:'';
   const ctaBlock=car.sold
     ?`<button class="btn-primary" onclick="go('aanbod')" style="width:100%;">Bekijk ander aanbod</button>`
@@ -730,18 +752,28 @@ function fuelOpts(sel){return['Benzine','Diesel','Elektrisch','Hybride','LPG'].m
 function renderAdminList(){
   const el=document.getElementById('adminList');
   if(!cars.length){el.innerHTML='<div style="color:var(--muted);font-size:14px;padding:12px 0;">Nog geen auto\'s toegevoegd.</div>';return;}
-  el.innerHTML=cars.map(c=>`
+  el.innerHTML=cars.map(c=>{
+    // Build photo thumbnails row for edit panel
+    const imgs = Array.isArray(c.imgs) ? c.imgs : (c.img ? [c.img] : []);
+    const thumbFirst = imgs[0] || '';
+    const photoList = imgs.map((url,idx)=>`
+      <div style="display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:6px 10px;margin-bottom:6px;">
+        <img src="${url}" style="width:48px;height:34px;object-fit:cover;border-radius:4px;" onerror="this.style.opacity='.3'">
+        <span style="flex:1;font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${url}</span>
+        <button onclick="removeEditPhoto(${c.id},${idx})" style="background:none;border:none;color:#c05050;cursor:pointer;font-size:16px;line-height:1;padding:2px 4px;">✕</button>
+      </div>`).join('');
+    return`
     <div class="admin-list-item" id="ali-${c.id}">
       <div class="admin-list-main">
-        <div class="admin-thumb">${c.img?`<img src="${c.img}" onerror="this.style.display='none'">`:svgPh()}</div>
+        <div class="admin-thumb">${thumbFirst?`<img src="${thumbFirst}" onerror="this.style.display='none'">`:svgPh()}</div>
         <div class="admin-info">
           <div class="admin-name">${c.make} ${c.model} (${c.year})${c.sold?' <span style="color:#c05050;font-size:11px;margin-left:6px;">VERKOCHT</span>':''}</div>
-          <div class="admin-sub">€ ${Number(c.price).toLocaleString('nl-NL')} · ${c.km} km · ${c.fuel}</div>
+          <div class="admin-sub">€ ${Number(c.price).toLocaleString('nl-NL')} · ${c.km} km · ${c.fuel} · ${imgs.length} foto${imgs.length!==1?'s':''}</div>
         </div>
         <div class="admin-actions">
           <button class="edit-btn" onclick="toggleEdit(${c.id})">✏️ Bewerken</button>
           <button class="sold-btn${c.sold?' active':''}" onclick="toggleSold(${c.id})">${c.sold?'↩ Beschikbaar':'🏷️ Verkocht'}</button>
-          <button class="del-btn" onclick="deleteCar(${c.id})">Verwijderen</button>
+          <button class="del-btn" onclick="deleteCar(${c.id})">🗑 Verwijderen</button>
         </div>
       </div>
       <div class="edit-panel" id="ep-${c.id}">
@@ -752,17 +784,96 @@ function renderAdminList(){
           <div class="form-group"><label>Kilometerstand</label><input type="number" id="ek-${c.id}" value="${c.km}" min="0" inputmode="numeric"></div>
           <div class="form-group"><label>Brandstof</label><select id="ef-${c.id}">${fuelOpts(c.fuel)}</select></div>
           <div class="form-group"><label>Prijs (€)</label><input type="number" id="ep2-${c.id}" value="${c.price}" min="0" inputmode="numeric"></div>
-          <div class="form-group full"><label>Foto URL</label><input type="url" id="ei-${c.id}" value="${c.img||''}"></div>
+          <div class="form-group full">
+            <label>Foto's (${imgs.length}/10)</label>
+            <div id="editPhotoList-${c.id}">${photoList||'<div style="color:var(--muted);font-size:12px;padding:4px 0;">Nog geen foto\'s</div>'}</div>
+            <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
+              <div class="upload-area" style="flex:1;min-width:160px;padding:12px;">
+                <input type="file" accept="image/*" onchange="uploadEditPhoto(${c.id},this)">
+                <div class="upload-area-text" style="font-size:12px;">📷 Upload foto</div>
+              </div>
+              <div style="flex:1;min-width:160px;">
+                <input type="url" id="editImgUrl-${c.id}" placeholder="of plak URL..." style="width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;">
+                <button onclick="addEditPhotoUrl(${c.id})" style="margin-top:6px;width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:8px;border-radius:6px;font-size:12px;cursor:pointer;">+ Voeg URL toe</button>
+              </div>
+            </div>
+            <div id="editUploadProg-${c.id}" style="font-size:12px;margin-top:6px;display:none;"></div>
+          </div>
         </div>
         <div class="edit-actions">
           <button class="save-btn" onclick="saveEdit(${c.id})">Opslaan</button>
           <button class="cancel-btn" onclick="toggleEdit(${c.id})">Annuleren</button>
         </div>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
+
 function toggleEdit(id){document.getElementById('ep-'+id).classList.toggle('open');}
 function toggleSold(id){const i=cars.findIndex(c=>c.id===id);if(i<0)return;cars[i].sold=!cars[i].sold;saveCars();renderAll();}
+
+function deleteCar(id){
+  if(!confirm('Weet je zeker dat je deze auto wilt verwijderen?'))return;
+  cars=cars.filter(c=>c.id!==id);
+  saveCars();
+  renderAll();
+}
+
+function getImgs(car){return Array.isArray(car.imgs)?car.imgs:(car.img?[car.img]:[]);}
+
+function removeEditPhoto(carId,idx){
+  const i=cars.findIndex(c=>c.id===carId);if(i<0)return;
+  const imgs=getImgs(cars[i]);
+  imgs.splice(idx,1);
+  cars[i].imgs=imgs;
+  cars[i].img=imgs[0]||'';
+  saveCars();
+  renderAdminList();
+  // re-open edit panel
+  const ep=document.getElementById('ep-'+carId);
+  if(ep)ep.classList.add('open');
+}
+
+function addEditPhotoUrl(carId){
+  const input=document.getElementById('editImgUrl-'+carId);
+  const url=input.value.trim();
+  if(!url)return;
+  const i=cars.findIndex(c=>c.id===carId);if(i<0)return;
+  const imgs=getImgs(cars[i]);
+  if(imgs.length>=10){alert('Maximaal 10 foto\'s per auto.');return;}
+  imgs.push(url);
+  cars[i].imgs=imgs;
+  cars[i].img=imgs[0];
+  input.value='';
+  saveCars();
+  renderAdminList();
+  const ep=document.getElementById('ep-'+carId);
+  if(ep)ep.classList.add('open');
+}
+
+async function uploadEditPhoto(carId,fileInput){
+  const file=fileInput.files[0];if(!file)return;
+  const prog=document.getElementById('editUploadProg-'+carId);
+  prog.style.display='block';prog.style.color='var(--muted)';prog.textContent='Foto uploaden...';
+  try{
+    const fd=new FormData();fd.append('image',file);
+    const res=await fetch('https://api.imgur.com/3/image',{method:'POST',headers:{Authorization:'Client-ID 546c25a59c58ad7'},body:fd});
+    const data=await res.json();
+    if(!data.success)throw new Error();
+    const i=cars.findIndex(c=>c.id===carId);if(i<0)return;
+    const imgs=getImgs(cars[i]);
+    if(imgs.length>=10){prog.style.color='#c05050';prog.textContent='Maximaal 10 foto\'s bereikt.';return;}
+    imgs.push(data.data.link);
+    cars[i].imgs=imgs;
+    cars[i].img=imgs[0];
+    saveCars();
+    prog.style.color='#6dcf6d';prog.textContent='✓ Foto toegevoegd!';
+    renderAdminList();
+    const ep=document.getElementById('ep-'+carId);
+    if(ep)ep.classList.add('open');
+  }catch(e){prog.style.color='#c05050';prog.textContent='Upload mislukt.';}
+}
+
 function saveEdit(id){
   const i=cars.findIndex(c=>c.id===id);if(i<0)return;
   cars[i]={...cars[i],
@@ -772,7 +883,6 @@ function saveEdit(id){
     km:document.getElementById('ek-'+id).value.trim()||cars[i].km,
     fuel:document.getElementById('ef-'+id).value,
     price:+document.getElementById('ep2-'+id).value||cars[i].price,
-    img:document.getElementById('ei-'+id).value.trim(),
   };
   saveCars();renderAll();
 }
@@ -790,6 +900,44 @@ function doLogin(){
     document.getElementById('loginErr').style.display='none';go('admin');
   } else document.getElementById('loginErr').style.display='block';
 }
+// Pending photos for new car form
+let newCarImgs=[];
+
+function renderNewCarPhotos(){
+  const el=document.getElementById('newCarPhotoList');
+  const countEl=document.getElementById('newCarPhotoCount');
+  if(countEl)countEl.textContent=newCarImgs.length;
+  if(!el)return;
+  if(!newCarImgs.length){
+    el.innerHTML='<div style="color:var(--muted);font-size:12px;padding:4px 0;">Nog geen foto\'s toegevoegd</div>';
+    document.getElementById('imgPreview').innerHTML='Geen foto — upload of voeg URL toe';
+    return;
+  }
+  el.innerHTML=newCarImgs.map((url,idx)=>`
+    <div style="display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:6px 10px;margin-bottom:6px;">
+      <img src="${url}" style="width:48px;height:34px;object-fit:cover;border-radius:4px;" onerror="this.style.opacity='.3'">
+      <span style="flex:1;font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${url}</span>
+      <button onclick="removeNewCarPhoto(${idx})" style="background:none;border:none;color:#c05050;cursor:pointer;font-size:16px;line-height:1;padding:2px 4px;">✕</button>
+    </div>`).join('');
+  // show first as preview
+  document.getElementById('imgPreview').innerHTML=`<img src="${newCarImgs[0]}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='Ongeldige URL'">`;
+}
+
+function removeNewCarPhoto(idx){
+  newCarImgs.splice(idx,1);
+  renderNewCarPhotos();
+}
+
+function addNewCarPhotoUrl(){
+  const input=document.getElementById('aImg');
+  const url=input.value.trim();
+  if(!url)return;
+  if(newCarImgs.length>=10){alert('Maximaal 10 foto\'s per auto.');return;}
+  newCarImgs.push(url);
+  input.value='';
+  renderNewCarPhotos();
+}
+
 async function handleUpload(){
   const file=document.getElementById('photoFile').files[0];if(!file)return;
   const prog=document.getElementById('uploadProgress');
@@ -798,35 +946,43 @@ async function handleUpload(){
     const fd=new FormData();fd.append('image',file);
     const res=await fetch('https://api.imgur.com/3/image',{method:'POST',headers:{Authorization:'Client-ID 546c25a59c58ad7'},body:fd});
     const data=await res.json();
-    if(data.success){document.getElementById('aImg').value=data.data.link;prog.style.color='#6dcf6d';prog.textContent='✓ Foto geüpload!';previewImg();}
-    else throw new Error();
+    if(!data.success)throw new Error();
+    if(newCarImgs.length>=10){prog.style.color='#c05050';prog.textContent='Maximaal 10 foto\'s bereikt.';return;}
+    newCarImgs.push(data.data.link);
+    prog.style.color='#6dcf6d';prog.textContent=`✓ Foto ${newCarImgs.length} geüpload!`;
+    document.getElementById('photoFile').value='';
+    renderNewCarPhotos();
   }catch(e){prog.style.color='#c05050';prog.textContent='Upload mislukt — plak een URL handmatig.';}
 }
+
 function addCar(){
   const make=document.getElementById('aMake').value.trim();
   const model=document.getElementById('aModel').value.trim();
   const price=document.getElementById('aPrice').value;
   if(!make||!model||!price){alert('Vul minimaal merk, model en prijs in.');return;}
+  const urlInput=document.getElementById('aImg').value.trim();
+  if(urlInput&&!newCarImgs.includes(urlInput))newCarImgs.push(urlInput);
   cars.unshift({id:Date.now(),
     make,model,
     year:document.getElementById('aYear').value.trim()||'—',
     km:document.getElementById('aKm').value.trim()||'—',
     fuel:document.getElementById('aFuel').value,
     price:+price,
-    img:document.getElementById('aImg').value.trim(),
+    imgs:[...newCarImgs],
+    img:newCarImgs[0]||'',
     sold:false
   });
   saveCars();renderAll();
   ['aMake','aModel','aYear','aKm','aPrice','aImg'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('imgPreview').innerHTML='Geen foto — upload een bestand of voeg een URL toe';
+  newCarImgs=[];
+  renderNewCarPhotos();
   document.getElementById('uploadProgress').style.display='none';
   document.getElementById('photoFile').value='';
 }
+
 function previewImg(){
   const url=document.getElementById('aImg').value.trim();
-  const el=document.getElementById('imgPreview');
-  if(url)el.innerHTML=`<img src="${url}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='Ongeldige URL'">`;
-  else el.innerHTML='Geen foto — upload een bestand of voeg een URL toe';
+  if(url)document.getElementById('imgPreview').innerHTML=`<img src="${url}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='Ongeldige URL'">`;
 }
 function submitContact(){
   const n=document.getElementById('cName').value.trim();
