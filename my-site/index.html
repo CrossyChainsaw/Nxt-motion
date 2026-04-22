@@ -1,301 +1,320 @@
-
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NXT Motion — Occasion Dealer Eindhoven</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap');
 *{box-sizing:border-box;margin:0;padding:0;}
-:root{--bg:#0a0a0a;--bg2:#111;--bg3:#1a1a1a;--accent1:#e8596a;--accent2:#f0a58a;--text:#f0f0f0;--muted:#777;--muted2:#555;--border:#222;--radius:10px;}
-#app{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;}
+:root{
+  --bg:#0a0a0a;--bg2:#111;--bg3:#1a1a1a;
+  --accent1:#e8596a;--accent2:#f0a58a;
+  --text:#f0f0f0;--muted:#777;--muted2:#555;--border:#222;--radius:10px;
+}
+html{font-size:16px;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
 
 /* NAV */
 nav{display:flex;align-items:center;justify-content:space-between;padding:16px 40px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;background:rgba(10,10,10,0.95);backdrop-filter:blur(12px);}
 .logo{font-family:'Bebas Neue',sans-serif;font-size:26px;background:linear-gradient(90deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:2px;cursor:pointer;}
 .nav-links{display:flex;gap:24px;}
-.nav-links a{color:var(--muted);text-decoration:none;font-size:13px;cursor:pointer;transition:color .2s;}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:14px;cursor:pointer;transition:color .2s;}
 .nav-links a:hover,.nav-links a.active{color:var(--text);}
-.nav-cta{background:linear-gradient(90deg,var(--accent1),var(--accent2));border:none;color:#fff;padding:8px 18px;border-radius:999px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;}
-.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;}
-.hamburger span{display:block;width:22px;height:2px;background:var(--text);border-radius:2px;}
-.mobile-menu{display:none;position:fixed;top:57px;left:0;right:0;background:rgba(10,10,10,0.98);border-bottom:1px solid var(--border);z-index:190;flex-direction:column;padding:12px 0;}
+.nav-cta{background:linear-gradient(90deg,var(--accent1),var(--accent2));border:none;color:#fff;padding:10px 20px;border-radius:999px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;}
+.hamburger{display:none;flex-direction:column;gap:6px;cursor:pointer;padding:4px;background:none;border:none;}
+.hamburger span{display:block;width:24px;height:2px;background:var(--text);border-radius:2px;transition:all .2s;}
+.mobile-menu{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(10,10,10,0.99);z-index:190;flex-direction:column;justify-content:center;align-items:center;gap:8px;}
 .mobile-menu.open{display:flex;}
-.mobile-menu a{padding:14px 24px;color:var(--muted);font-size:15px;cursor:pointer;border-bottom:1px solid var(--border);}
+.mobile-menu a{padding:18px 40px;color:var(--text);font-size:22px;cursor:pointer;font-family:'Bebas Neue',sans-serif;letter-spacing:2px;width:100%;text-align:center;border-bottom:1px solid var(--border);}
 .mobile-menu a:last-child{border-bottom:none;}
-.mobile-menu a:hover{color:var(--text);}
+.mobile-close{position:absolute;top:20px;right:24px;background:none;border:none;color:var(--muted);font-size:28px;cursor:pointer;line-height:1;}
 
-.page{display:none;animation:fadeIn .25s ease;}
+/* PAGES */
+.page{display:none;}
 .page.active{display:block;}
-@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 
 /* HERO */
 .hero{padding:80px 40px 60px;text-align:center;position:relative;overflow:hidden;}
 .hero::before{content:'';position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:700px;height:400px;background:radial-gradient(ellipse,rgba(232,89,106,0.12) 0%,transparent 68%);pointer-events:none;}
-.hero-tag{display:inline-block;border:1px solid var(--border);color:var(--muted);font-size:11px;padding:5px 14px;border-radius:999px;margin-bottom:20px;letter-spacing:1.5px;text-transform:uppercase;}
-.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(48px,8vw,84px);line-height:1;background:linear-gradient(135deg,#fff 40%,var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:16px;}
-.hero p{color:var(--muted);font-size:15px;max-width:460px;margin:0 auto 32px;line-height:1.75;}
-.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
-.btn-primary{background:linear-gradient(90deg,var(--accent1),var(--accent2));border:none;color:#fff;padding:14px 28px;border-radius:999px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:opacity .2s,transform .15s;display:inline-block;text-decoration:none;}
-.btn-primary:hover{opacity:.88;transform:translateY(-1px);}
-.btn-ghost{background:transparent;border:2px solid rgba(240,165,138,0.5);color:var(--accent2);padding:14px 28px;border-radius:999px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s;}
-.btn-ghost:hover{border-color:var(--accent2);background:rgba(240,165,138,0.08);}
+.hero-tag{display:inline-block;border:1px solid var(--border);color:var(--muted);font-size:12px;padding:6px 16px;border-radius:999px;margin-bottom:24px;letter-spacing:1.5px;text-transform:uppercase;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(52px,8vw,88px);line-height:1;background:linear-gradient(135deg,#fff 40%,var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:18px;}
+.hero p{color:var(--muted);font-size:16px;max-width:480px;margin:0 auto 36px;line-height:1.75;}
+.hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+.btn-primary{background:linear-gradient(90deg,var(--accent1),var(--accent2));border:none;color:#fff;padding:16px 32px;border-radius:999px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;transition:opacity .2s;display:inline-block;text-decoration:none;}
+.btn-primary:hover{opacity:.88;}
+.btn-ghost{background:transparent;border:2px solid rgba(240,165,138,0.5);color:var(--accent2);padding:16px 32px;border-radius:999px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;transition:all .2s;}
+.btn-ghost:hover{border-color:var(--accent2);}
 
 /* STATS */
-.stats-bar{display:flex;justify-content:center;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin:0 40px;}
-.stat{flex:1;max-width:200px;padding:26px 16px;text-align:center;border-right:1px solid var(--border);}
+.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin:0 40px;}
+.stat{padding:28px 16px;text-align:center;border-right:1px solid var(--border);}
 .stat:last-child{border-right:none;}
-.stat-num{font-family:'Bebas Neue',sans-serif;font-size:34px;background:linear-gradient(90deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.stat-label{color:var(--muted);font-size:11px;margin-top:2px;letter-spacing:.5px;text-transform:uppercase;}
+.stat-num{font-family:'Bebas Neue',sans-serif;font-size:36px;background:linear-gradient(90deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.stat-label{color:var(--muted);font-size:11px;margin-top:4px;letter-spacing:.5px;text-transform:uppercase;}
 
 /* SECTION */
-.section{padding:56px 40px;}
-.section-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px;}
-.section-title{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:1px;}
-.section-link{color:var(--accent2);font-size:13px;cursor:pointer;}
+.section{padding:60px 40px;}
+.section-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:32px;}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:1px;}
+.section-link{color:var(--accent2);font-size:14px;cursor:pointer;text-decoration:none;}
 
 /* FILTERS */
-.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px;align-items:center;}
-.filter-select{background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;cursor:pointer;transition:border-color .2s;}
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:28px;align-items:center;}
+.filter-label{font-size:13px;color:var(--muted);}
+.filter-select{background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;cursor:pointer;}
 .filter-select:focus{border-color:var(--accent1);}
-.filter-label{font-size:12px;color:var(--muted);white-space:nowrap;}
 
-/* CARS */
-.cars-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px;}
+/* CARS GRID */
+.cars-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;}
 .car-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:transform .2s,border-color .2s;cursor:pointer;position:relative;}
 .car-card:hover{transform:translateY(-4px);border-color:#333;}
 .car-card:hover .car-overlay{opacity:1;}
-.sold-badge{position:absolute;top:12px;left:12px;background:#c0392b;color:#fff;font-size:10px;font-weight:600;padding:4px 10px;border-radius:4px;letter-spacing:.8px;text-transform:uppercase;z-index:2;}
+.sold-badge{position:absolute;top:12px;left:12px;background:#c0392b;color:#fff;font-size:11px;font-weight:600;padding:5px 11px;border-radius:4px;letter-spacing:.8px;text-transform:uppercase;z-index:2;}
 .sold-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.45);z-index:1;pointer-events:none;}
-.car-img-wrap{width:100%;height:172px;background:var(--bg3);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;}
+.car-img-wrap{width:100%;height:190px;background:var(--bg3);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;}
 .car-img-wrap img{width:100%;height:100%;object-fit:cover;}
 .car-overlay{position:absolute;inset:0;background:rgba(232,89,106,0.15);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;z-index:1;}
-.car-overlay-text{background:rgba(0,0,0,0.7);color:#fff;font-size:12px;padding:6px 14px;border-radius:999px;}
-.car-body{padding:14px 16px;}
-.car-make{font-size:10px;color:var(--accent1);text-transform:uppercase;letter-spacing:1.2px;font-weight:500;}
-.car-model{font-size:16px;font-weight:500;margin:2px 0 8px;}
-.car-specs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
-.spec{font-size:10px;color:var(--muted);background:var(--bg3);padding:3px 8px;border-radius:4px;}
-.car-footer{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);padding-top:12px;}
-.car-price{font-family:'Bebas Neue',sans-serif;font-size:21px;background:linear-gradient(90deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.car-overlay-text{background:rgba(0,0,0,0.7);color:#fff;font-size:13px;padding:8px 16px;border-radius:999px;}
+.car-body{padding:16px 18px;}
+.car-make{font-size:11px;color:var(--accent1);text-transform:uppercase;letter-spacing:1.2px;font-weight:500;}
+.car-model{font-size:17px;font-weight:500;margin:3px 0 10px;}
+.car-specs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+.spec{font-size:11px;color:var(--muted);background:var(--bg3);padding:4px 9px;border-radius:4px;}
+.car-footer{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);padding-top:14px;}
+.car-price{font-family:'Bebas Neue',sans-serif;font-size:24px;background:linear-gradient(90deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 .car-price.sold-price{-webkit-text-fill-color:var(--muted);background:none;text-decoration:line-through;}
-.car-detail-hint{font-size:11px;color:var(--muted);}
-.no-cars{text-align:center;padding:50px 20px;color:var(--muted);grid-column:1/-1;}
+.car-detail-hint{font-size:12px;color:var(--muted);}
+.no-cars{text-align:center;padding:60px 20px;color:var(--muted);grid-column:1/-1;font-size:15px;}
 
 /* DETAIL */
-.detail-back{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;cursor:pointer;margin-bottom:24px;}
+.detail-back{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:14px;cursor:pointer;margin-bottom:28px;transition:color .2s;}
 .detail-back:hover{color:var(--text);}
-.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;}
 .detail-img{width:100%;aspect-ratio:16/10;background:var(--bg3);border-radius:var(--radius);overflow:hidden;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);}
 .detail-img img{width:100%;height:100%;object-fit:cover;}
-.detail-badge{font-size:10px;color:var(--accent1);text-transform:uppercase;letter-spacing:1.2px;font-weight:500;margin-bottom:8px;}
-.detail-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(28px,4vw,40px);line-height:1.1;margin-bottom:16px;color:var(--text);}
-.detail-price{font-family:'Bebas Neue',sans-serif;font-size:38px;background:linear-gradient(90deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:20px;}
+.detail-badge{font-size:11px;color:var(--accent1);text-transform:uppercase;letter-spacing:1.2px;font-weight:500;margin-bottom:10px;display:block;}
+.detail-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(30px,4vw,44px);line-height:1.1;margin-bottom:18px;color:var(--text);}
+.detail-price{font-family:'Bebas Neue',sans-serif;font-size:42px;background:linear-gradient(90deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:24px;display:block;}
 .detail-specs-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px;}
-.detail-spec-item{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px 14px;}
-.detail-spec-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;}
-.detail-spec-val{font-size:14px;font-weight:500;color:var(--text);}
+.detail-spec-item{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px 16px;}
+.detail-spec-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;}
+.detail-spec-val{font-size:15px;font-weight:500;color:var(--text);}
 .detail-spec-val a{color:var(--accent2);text-decoration:none;}
-.detail-spec-val a:hover{text-decoration:underline;}
-.detail-cta{display:flex;flex-direction:column;gap:10px;}
-.call-card{display:flex;align-items:center;justify-content:space-between;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;cursor:pointer;transition:border-color .2s;text-decoration:none;}
+.detail-cta{display:flex;flex-direction:column;gap:12px;}
+.call-card{display:flex;align-items:center;justify-content:space-between;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:16px 18px;cursor:pointer;transition:border-color .2s;text-decoration:none;}
 .call-card:hover{border-color:var(--accent2);}
-.call-card-left{display:flex;align-items:center;gap:12px;}
-.call-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:#fff;flex-shrink:0;}
-.call-name{font-size:14px;font-weight:500;color:var(--text);}
-.call-num{font-size:12px;color:var(--muted);margin-top:1px;}
-.call-icon{font-size:18px;}
+.call-card-left{display:flex;align-items:center;gap:14px;}
+.call-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;color:#fff;flex-shrink:0;}
+.call-name{font-size:15px;font-weight:500;color:var(--text);}
+.call-num{font-size:13px;color:var(--muted);margin-top:2px;}
+.call-icon{font-size:20px;}
 
-/* GARANTIE */
-.garantie-banner{margin:0 40px 40px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:22px 26px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
-.garantie-icon{width:46px;height:46px;background:linear-gradient(135deg,var(--accent1),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
-.garantie-text{flex:1;min-width:180px;}
-.garantie-text h4{font-size:14px;font-weight:500;margin-bottom:3px;}
-.garantie-text p{font-size:12px;color:var(--muted);line-height:1.6;}
-.garantie-link a{font-size:12px;color:var(--accent2);text-decoration:none;border:1px solid var(--border);padding:7px 14px;border-radius:999px;white-space:nowrap;display:inline-block;transition:border-color .2s;}
+/* GARANTIE BANNER */
+.garantie-banner{margin:0 40px 48px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:24px 28px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+.garantie-icon{width:50px;height:50px;background:linear-gradient(135deg,var(--accent1),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.garantie-text{flex:1;min-width:200px;}
+.garantie-text h4{font-size:15px;font-weight:500;margin-bottom:4px;}
+.garantie-text p{font-size:13px;color:var(--muted);line-height:1.6;}
+.garantie-link a{font-size:13px;color:var(--accent2);text-decoration:none;border:1px solid var(--border);padding:9px 18px;border-radius:999px;white-space:nowrap;display:inline-block;transition:border-color .2s;}
 .garantie-link a:hover{border-color:var(--accent2);}
 
 /* OVER ONS */
-.over-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start;}
-.over-img{background:var(--bg3);border:1px dashed var(--border);border-radius:var(--radius);height:240px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--muted2);font-size:13px;}
-.team{display:flex;gap:12px;margin-top:20px;}
-.team-member{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center;}
-.team-avatar{width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:19px;color:#fff;margin:0 auto 10px;}
-.team-name{font-size:14px;font-weight:500;color:var(--text);}
-.team-role{font-size:11px;color:var(--muted);margin-top:2px;}
+.over-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;}
+.over-img{background:var(--bg3);border:1px dashed var(--border);border-radius:var(--radius);height:260px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--muted2);font-size:14px;}
+.team{display:flex;gap:14px;margin-top:24px;}
+.team-member{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:18px;text-align:center;}
+.team-avatar{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:20px;color:#fff;margin:0 auto 12px;}
+.team-name{font-size:15px;font-weight:500;color:var(--text);}
+.team-role{font-size:12px;color:var(--muted);margin-top:3px;}
 
 /* CONTACT */
-.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:36px;max-width:860px;margin:0 auto;}
-.contact-info h3{font-family:'Bebas Neue',sans-serif;font-size:24px;margin-bottom:18px;}
-.citem{display:flex;gap:14px;align-items:flex-start;margin-bottom:18px;}
-.cicon{width:36px;height:36px;background:var(--bg3);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
-.clabel{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
-.cval{font-size:13px;margin-top:2px;line-height:1.6;color:var(--text);}
-.wa-contact-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px;}
-.wa-contact-btn{display:flex;align-items:center;gap:7px;background:#25d366;color:#fff;padding:10px 18px;border-radius:999px;text-decoration:none;font-size:13px;font-weight:500;}
-.wa-contact-btn:hover{opacity:.88;}
-.form-group{margin-bottom:14px;}
-.form-group label{display:block;font-size:11px;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px;}
-.form-group input,.form-group textarea,.form-group select{width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:10px 13px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;transition:border-color .2s;}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;max-width:900px;margin:0 auto;}
+.contact-info h3{font-family:'Bebas Neue',sans-serif;font-size:26px;margin-bottom:20px;}
+.citem{display:flex;gap:14px;align-items:flex-start;margin-bottom:20px;}
+.cicon{width:40px;height:40px;background:var(--bg3);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.clabel{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+.cval{font-size:14px;margin-top:3px;line-height:1.6;color:var(--text);}
+.wa-contact-btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px;}
+.wa-contact-btn{display:flex;align-items:center;gap:8px;background:#25d366;color:#fff;padding:12px 20px;border-radius:999px;text-decoration:none;font-size:14px;font-weight:500;}
+.form-group{margin-bottom:16px;}
+.form-group label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;}
+.form-group input,.form-group textarea,.form-group select{width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:12px 14px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color .2s;}
 .form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--accent1);}
-.form-group textarea{resize:vertical;min-height:90px;}
-.form-success{background:rgba(80,180,80,0.1);border:1px solid rgba(80,180,80,0.25);color:#6dcf6d;padding:11px 15px;border-radius:8px;font-size:13px;margin-top:10px;display:none;}
+.form-group textarea{resize:vertical;min-height:100px;}
+.form-success{background:rgba(80,180,80,0.1);border:1px solid rgba(80,180,80,0.25);color:#6dcf6d;padding:12px 16px;border-radius:8px;font-size:14px;margin-top:12px;display:none;}
 
 /* ADMIN */
-.admin-wrap{max-width:860px;margin:0 auto;padding:36px 40px;}
-.admin-top{display:flex;align-items:center;gap:12px;margin-bottom:28px;flex-wrap:wrap;}
-.admin-top h2{font-family:'Bebas Neue',sans-serif;font-size:26px;}
-.badge-admin{font-size:10px;background:var(--accent1);color:#fff;padding:3px 8px;border-radius:4px;letter-spacing:1px;text-transform:uppercase;}
-.admin-list-item{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:10px;}
+.admin-wrap{max-width:900px;margin:0 auto;padding:40px;}
+.admin-top{display:flex;align-items:center;gap:14px;margin-bottom:32px;flex-wrap:wrap;}
+.admin-top h2{font-family:'Bebas Neue',sans-serif;font-size:28px;}
+.badge-admin{font-size:11px;background:var(--accent1);color:#fff;padding:4px 10px;border-radius:4px;letter-spacing:1px;text-transform:uppercase;}
+.admin-list-item{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:16px 18px;margin-bottom:12px;}
 .admin-list-main{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
-.admin-thumb{width:60px;height:42px;background:var(--bg3);border-radius:6px;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.admin-thumb{width:70px;height:48px;background:var(--bg3);border-radius:6px;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
 .admin-thumb img{width:100%;height:100%;object-fit:cover;}
 .admin-info{flex:1;min-width:0;}
-.admin-name{font-size:13px;font-weight:500;color:var(--text);}
-.admin-sub{font-size:12px;color:var(--muted);margin-top:1px;}
-.admin-actions{display:flex;gap:6px;flex-wrap:wrap;}
-.edit-btn{background:transparent;border:1px solid var(--border);color:var(--muted);padding:6px 12px;border-radius:6px;font-size:11px;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.admin-name{font-size:14px;font-weight:500;color:var(--text);}
+.admin-sub{font-size:13px;color:var(--muted);margin-top:2px;}
+.admin-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.edit-btn{background:transparent;border:1px solid var(--border);color:var(--muted);padding:8px 14px;border-radius:6px;font-size:12px;cursor:pointer;transition:all .2s;white-space:nowrap;}
 .edit-btn:hover{border-color:var(--accent2);color:var(--accent2);}
-.sold-btn{background:transparent;border:1px solid #3a1a1a;color:#c05050;padding:6px 12px;border-radius:6px;font-size:11px;cursor:pointer;transition:all .2s;white-space:nowrap;}
-.sold-btn:hover{background:#1e0e0e;}
+.sold-btn{background:transparent;border:1px solid #3a1a1a;color:#c05050;padding:8px 14px;border-radius:6px;font-size:12px;cursor:pointer;white-space:nowrap;}
 .sold-btn.active{background:#c0392b;border-color:#c0392b;color:#fff;}
-.del-btn{background:transparent;border:1px solid #2e1a1a;color:#c05050;padding:6px 12px;border-radius:6px;font-size:11px;cursor:pointer;white-space:nowrap;}
+.del-btn{background:transparent;border:1px solid #2e1a1a;color:#c05050;padding:8px 14px;border-radius:6px;font-size:12px;cursor:pointer;white-space:nowrap;}
 .del-btn:hover{background:#1e0e0e;}
-.edit-panel{display:none;border-top:1px solid var(--border);margin-top:12px;padding-top:14px;}
+.edit-panel{display:none;border-top:1px solid var(--border);margin-top:14px;padding-top:16px;}
 .edit-panel.open{display:block;}
-.edit-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.edit-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .edit-grid .full{grid-column:1/-1;}
-.edit-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
-.save-btn{background:linear-gradient(90deg,var(--accent1),var(--accent2));border:none;color:#fff;padding:8px 18px;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;}
-.cancel-btn{background:transparent;border:1px solid var(--border);color:var(--muted);padding:8px 14px;border-radius:6px;font-size:12px;cursor:pointer;}
-.upload-area{border:2px dashed var(--border);border-radius:8px;padding:18px;text-align:center;cursor:pointer;transition:border-color .2s;margin-top:8px;position:relative;}
+.edit-actions{display:flex;gap:10px;margin-top:12px;}
+.save-btn{background:linear-gradient(90deg,var(--accent1),var(--accent2));border:none;color:#fff;padding:10px 20px;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;}
+.cancel-btn{background:transparent;border:1px solid var(--border);color:var(--muted);padding:10px 16px;border-radius:6px;font-size:13px;cursor:pointer;}
+.upload-area{border:2px dashed var(--border);border-radius:8px;padding:20px;text-align:center;cursor:pointer;transition:border-color .2s;margin-top:8px;position:relative;}
 .upload-area:hover{border-color:var(--accent1);}
 .upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
-.upload-area-text{font-size:13px;color:var(--muted);}
+.upload-area-text{font-size:14px;color:var(--muted);}
 .upload-area-text span{color:var(--accent2);}
-.upload-progress{display:none;margin-top:8px;font-size:12px;color:var(--muted);}
-.add-form{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:22px;}
-.add-form h3{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--muted);margin-bottom:16px;}
-.add-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.upload-progress{display:none;margin-top:8px;font-size:13px;color:var(--muted);}
+.add-form{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:24px;}
+.add-form h3{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--muted);margin-bottom:18px;}
+.add-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 .add-grid .full{grid-column:1/-1;}
-.img-preview{width:100%;height:130px;background:var(--bg3);border:1px dashed var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px;margin-top:8px;overflow:hidden;}
+.img-preview{width:100%;height:150px;background:var(--bg3);border:1px dashed var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;margin-top:10px;overflow:hidden;}
 .img-preview img{width:100%;height:100%;object-fit:cover;}
-.login-wrap{max-width:340px;margin:70px auto;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:32px;}
-.login-wrap h2{font-family:'Bebas Neue',sans-serif;font-size:24px;margin-bottom:4px;color:var(--text);}
-.login-wrap p{color:var(--muted);font-size:12px;margin-bottom:22px;}
-.login-err{color:#c05050;font-size:12px;margin-top:8px;display:none;}
+
+/* LOGIN */
+.login-wrap{max-width:360px;margin:80px auto;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:36px;}
+.login-wrap h2{font-family:'Bebas Neue',sans-serif;font-size:26px;margin-bottom:6px;color:var(--text);}
+.login-wrap p{color:var(--muted);font-size:13px;margin-bottom:24px;}
+.login-err{color:#c05050;font-size:13px;margin-top:10px;display:none;}
 
 /* WA FLOAT */
 .wa-float{position:fixed;z-index:300;touch-action:none;user-select:none;}
-.wa-main{width:52px;height:52px;background:#25d366;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:grab;box-shadow:0 4px 16px rgba(37,211,102,0.35);}
+.wa-main{width:60px;height:60px;background:#25d366;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:grab;box-shadow:0 4px 20px rgba(37,211,102,0.4);}
 .wa-main:active{cursor:grabbing;}
-.wa-popup{position:absolute;display:none;flex-direction:column;gap:8px;white-space:nowrap;}
+.wa-popup{position:absolute;display:none;flex-direction:column;gap:10px;white-space:nowrap;}
 .wa-popup.open{display:flex;}
-.wa-popup.above{bottom:calc(100% + 10px);top:auto;}
-.wa-popup.below{top:calc(100% + 10px);bottom:auto;}
+.wa-popup.above{bottom:calc(100% + 12px);top:auto;}
+.wa-popup.below{top:calc(100% + 12px);bottom:auto;}
 .wa-popup.align-right{right:0;left:auto;align-items:flex-end;}
 .wa-popup.align-left{left:0;right:auto;align-items:flex-start;}
-.wa-person{display:flex;align-items:center;gap:10px;background:var(--bg2);border:1px solid var(--border);border-radius:999px;padding:8px 16px 8px 10px;cursor:pointer;transition:border-color .2s;text-decoration:none;}
+.wa-person{display:flex;align-items:center;gap:12px;background:var(--bg2);border:1px solid var(--border);border-radius:999px;padding:10px 18px 10px 12px;cursor:pointer;transition:border-color .2s;text-decoration:none;}
 .wa-person:hover{border-color:#25d366;}
-.wa-p-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;color:#fff;flex-shrink:0;}
-.wa-p-name{font-size:13px;font-weight:500;color:var(--text);}
-.wa-p-role{font-size:11px;color:var(--muted);}
+.wa-p-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;color:#fff;flex-shrink:0;}
+.wa-p-name{font-size:14px;font-weight:500;color:var(--text);}
+.wa-p-role{font-size:12px;color:var(--muted);}
 
-footer{border-top:1px solid var(--border);padding:28px 40px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
-.footer-links{display:flex;gap:20px;flex-wrap:wrap;}
-.footer-links a{color:var(--muted2);font-size:12px;text-decoration:none;cursor:pointer;}
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:32px 40px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;}
+.footer-links{display:flex;gap:24px;flex-wrap:wrap;}
+.footer-links a{color:var(--muted2);font-size:13px;text-decoration:none;cursor:pointer;}
 .footer-links a:hover{color:var(--muted);}
 
-/* ===================== MOBILE ===================== */
-@media(max-width:660px){
-  /* NAV */
-  nav{padding:12px 16px;}
+/* ═══════════════════════════════════════
+   MOBILE — alles onder 768px
+   Gebaseerd op iPhone schermformaat
+═══════════════════════════════════════ */
+@media(max-width:768px){
+  /* NAV — alleen logo + hamburger */
+  nav{padding:0 20px;height:60px;}
+  .logo{font-size:22px;}
   .nav-links,.nav-cta{display:none;}
   .hamburger{display:flex;}
 
-  /* HERO — compact, geen rare lege ruimte */
-  .hero{padding:36px 20px 28px;}
-  .hero-tag{font-size:10px;padding:4px 12px;margin-bottom:14px;}
-  .hero h1{font-size:clamp(40px,11vw,58px);margin-bottom:12px;}
-  .hero p{font-size:14px;margin-bottom:22px;}
-  .hero-btns{flex-direction:column;align-items:stretch;gap:10px;max-width:100%;}
-  .btn-primary,.btn-ghost{width:100%;padding:15px 20px;font-size:15px;text-align:center;}
+  /* HERO */
+  .hero{padding:48px 20px 36px;}
+  .hero-tag{font-size:11px;padding:6px 14px;margin-bottom:18px;}
+  .hero h1{font-size:min(13vw, 52px);margin-bottom:14px;}
+  .hero p{font-size:15px;margin-bottom:28px;max-width:100%;}
+  .hero-btns{flex-direction:column;align-items:stretch;gap:12px;}
+  .btn-primary,.btn-ghost{width:100%;padding:18px 24px;font-size:16px;text-align:center;border-radius:14px;}
 
-  /* STATS — 2x2 grid, gelijke vakjes */
-  .stats-bar{margin:0;display:grid;grid-template-columns:1fr 1fr;border-left:none;border-right:none;}
-  .stat{max-width:none;border-right:none;border-bottom:1px solid var(--border);padding:16px 12px;}
+  /* STATS — 2x2 grid */
+  .stats-bar{grid-template-columns:1fr 1fr;margin:0;}
+  .stat{padding:20px 12px;border-right:none;border-bottom:1px solid var(--border);}
   .stat:nth-child(odd){border-right:1px solid var(--border);}
   .stat:nth-child(3),.stat:nth-child(4){border-bottom:none;}
-  .stat-num{font-size:28px;}
+  .stat-num{font-size:32px;}
   .stat-label{font-size:10px;}
 
   /* SECTION */
-  .section{padding:28px 16px;}
-  .section-title{font-size:24px;}
+  .section{padding:36px 20px;}
+  .section-title{font-size:26px;}
+  .section-header{margin-bottom:20px;}
 
-  /* CARS — 1 kolom, grotere foto op mobiel */
-  .cars-grid{grid-template-columns:1fr;gap:14px;}
-  .car-img-wrap{height:200px;}
-  .car-model{font-size:17px;}
-  .car-footer{flex-wrap:wrap;gap:8px;}
-  .car-price{font-size:24px;}
+  /* CARS — 1 kolom, grotere foto */
+  .cars-grid{grid-template-columns:1fr;gap:16px;}
+  .car-img-wrap{height:220px;}
+  .car-model{font-size:18px;}
+  .car-price{font-size:26px;}
+  .car-body{padding:16px;}
+  .spec{font-size:12px;padding:5px 10px;}
 
-  /* FILTERS — compact scroll */
-  .filters{gap:6px;flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;}
+  /* FILTERS — scrollbaar */
+  .filters{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px;gap:8px;}
   .filter-label{display:none;}
-  .filter-select{font-size:12px;padding:7px 10px;flex-shrink:0;min-width:0;}
+  .filter-select{flex-shrink:0;font-size:13px;padding:9px 12px;min-width:130px;}
 
-  /* GARANTIE BANNER — gestapeld */
-  .garantie-banner{margin:0 16px 24px;padding:16px;gap:12px;flex-direction:column;align-items:flex-start;}
+  /* GARANTIE BANNER */
+  .garantie-banner{margin:0 20px 32px;padding:18px;flex-direction:column;align-items:flex-start;gap:14px;}
+  .garantie-icon{width:44px;height:44px;font-size:18px;}
+  .garantie-text h4{font-size:15px;}
+  .garantie-text p{font-size:13px;}
   .garantie-link{width:100%;}
-  .garantie-link a{width:100%;text-align:center;display:block;padding:10px;}
+  .garantie-link a{width:100%;text-align:center;display:block;padding:12px;font-size:14px;}
 
-  /* DETAIL — gestapeld, ruim */
-  .detail-grid{grid-template-columns:1fr;gap:20px;}
+  /* DETAIL — gestapeld */
+  .detail-grid{grid-template-columns:1fr;gap:24px;}
   .detail-img{aspect-ratio:16/9;}
-  .detail-title{font-size:28px;}
-  .detail-price{font-size:32px;margin-bottom:16px;}
-  .detail-specs-grid{grid-template-columns:1fr 1fr;gap:8px;}
-  .detail-spec-item{padding:10px 12px;}
-  .detail-spec-label{font-size:9px;}
-  .detail-spec-val{font-size:13px;}
-  .call-card{padding:14px;}
+  .detail-title{font-size:30px;}
+  .detail-price{font-size:36px;}
+  .detail-specs-grid{grid-template-columns:1fr 1fr;}
+  .detail-spec-item{padding:12px 14px;}
+  .call-card{padding:16px;}
+  .call-name{font-size:16px;}
 
-  /* OVER ONS — gestapeld, foto eerst weglaten op mobiel of klein houden */
-  .over-grid{grid-template-columns:1fr;gap:20px;}
-  .over-img{height:140px;font-size:12px;}
-  .team{flex-direction:row;gap:10px;}
-  .team-member{padding:12px 10px;}
-  .team-avatar{width:42px;height:42px;font-size:16px;}
-  .team-name{font-size:13px;}
+  /* OVER ONS */
+  .over-grid{grid-template-columns:1fr;gap:24px;}
+  .over-img{height:160px;}
+  .team{flex-direction:row;gap:12px;}
+  .team-member{padding:14px 10px;}
+  .team-avatar{width:48px;height:48px;font-size:17px;}
+  .team-name{font-size:14px;}
 
-  /* CONTACT — gestapeld, info bovenaan */
-  .contact-grid{grid-template-columns:1fr;gap:24px;}
-  .contact-info h3{font-size:20px;margin-bottom:14px;}
-  .citem{margin-bottom:12px;}
-  .cicon{width:32px;height:32px;font-size:13px;flex-shrink:0;}
-  .cval{font-size:13px;}
-  .wa-contact-btns{flex-direction:column;gap:8px;}
-  .wa-contact-btn{justify-content:center;padding:12px 18px;font-size:14px;}
+  /* CONTACT */
+  .contact-grid{grid-template-columns:1fr;gap:32px;}
+  .contact-info h3{font-size:22px;}
+  .cicon{width:38px;height:38px;font-size:15px;}
+  .cval{font-size:14px;}
+  .wa-contact-btns{flex-direction:column;gap:10px;}
+  .wa-contact-btn{justify-content:center;padding:14px 20px;font-size:15px;border-radius:12px;}
 
   /* ADMIN */
-  .admin-wrap{padding:20px 16px;}
+  .admin-wrap{padding:24px 20px;}
   .edit-grid,.add-grid{grid-template-columns:1fr;}
   .edit-grid .full,.add-grid .full{grid-column:1;}
-  .admin-actions{width:100%;margin-top:8px;}
-  .admin-list-main{gap:10px;}
-  .admin-thumb{width:52px;height:36px;}
+  .admin-actions{width:100%;margin-top:10px;gap:6px;}
+  .admin-thumb{width:60px;height:42px;}
+  .admin-name{font-size:14px;}
 
   /* FOOTER */
-  footer{flex-direction:column;text-align:center;padding:20px 16px;gap:12px;}
-  .footer-links{justify-content:center;gap:16px;}
+  footer{flex-direction:column;text-align:center;padding:24px 20px;gap:14px;}
+  .footer-links{justify-content:center;gap:18px;}
 
-  /* WA FLOAT — groter op mobiel */
-  .wa-main{width:62px;height:62px;}
-  .wa-main svg{width:32px;height:32px;}
-  .wa-p-name{font-size:14px;}
-  .wa-p-role{font-size:12px;}
-  .wa-p-avatar{width:36px;height:36px;font-size:14px;}
-  .wa-person{padding:10px 18px 10px 12px;gap:12px;}
+  /* WA — groter op mobiel */
+  .wa-main{width:68px;height:68px;}
+  .wa-main svg{width:34px;height:34px;}
+  .wa-p-name{font-size:15px;}
+  .wa-p-role{font-size:13px;}
+  .wa-p-avatar{width:40px;height:40px;font-size:15px;}
+  .wa-person{padding:12px 20px 12px 12px;gap:12px;}
 }
 </style>
+</head>
+<body>
 
-<div id="app">
 <nav>
   <div class="logo" onclick="go('home')">NXT MOTION</div>
   <div class="nav-links">
@@ -305,9 +324,13 @@ footer{border-top:1px solid var(--border);padding:28px 40px;display:flex;justify
     <a onclick="go('contact')" id="nl-contact">Contact</a>
   </div>
   <button class="nav-cta" onclick="go('contact')">Contact</button>
-  <div class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+  <button class="hamburger" onclick="openMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+
 <div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" onclick="closeMenu()">✕</button>
   <a onclick="go('home');closeMenu()">Home</a>
   <a onclick="go('aanbod');closeMenu()">Aanbod</a>
   <a onclick="go('over');closeMenu()">Over ons</a>
@@ -315,7 +338,7 @@ footer{border-top:1px solid var(--border);padding:28px 40px;display:flex;justify
 </div>
 
 <!-- WA FLOAT -->
-<div class="wa-float" id="waFloat" style="bottom:24px;right:24px;">
+<div class="wa-float" id="waFloat" style="bottom:28px;right:28px;">
   <div class="wa-popup" id="waPopup">
     <a class="wa-person" href="https://wa.me/31617152916" target="_blank">
       <div class="wa-p-avatar">IM</div>
@@ -327,7 +350,7 @@ footer{border-top:1px solid var(--border);padding:28px 40px;display:flex;justify
     </a>
   </div>
   <div class="wa-main" id="waBtn">
-    <svg width="26" height="26" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.533 5.858L.057 23.428a.5.5 0 00.609.61l5.692-1.49A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.882a9.87 9.87 0 01-5.031-1.377l-.36-.214-3.733.978.998-3.648-.235-.374A9.861 9.861 0 012.118 12C2.118 6.52 6.52 2.118 12 2.118S21.882 6.52 21.882 12 17.48 21.882 12 21.882z"/></svg>
+    <svg width="30" height="30" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.533 5.858L.057 23.428a.5.5 0 00.609.61l5.692-1.49A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.882a9.87 9.87 0 01-5.031-1.377l-.36-.214-3.733.978.998-3.648-.235-.374A9.861 9.861 0 012.118 12C2.118 6.52 6.52 2.118 12 2.118S21.882 6.52 21.882 12 17.48 21.882 12 21.882z"/></svg>
   </div>
 </div>
 
@@ -351,7 +374,7 @@ footer{border-top:1px solid var(--border);padding:28px 40px;display:flex;justify
   <div class="section">
     <div class="section-header">
       <div class="section-title">Recent aanbod</div>
-      <div class="section-link" onclick="go('aanbod')">Alles bekijken →</div>
+      <a class="section-link" onclick="go('aanbod')">Alles bekijken →</a>
     </div>
     <div class="cars-grid" id="homeGrid"></div>
   </div>
@@ -367,7 +390,7 @@ footer{border-top:1px solid var(--border);padding:28px 40px;display:flex;justify
   <div class="section">
     <div class="section-header">
       <div class="section-title">Ons aanbod</div>
-      <div class="section-link" id="aanbodCount" style="cursor:default;color:var(--muted);">— auto's</div>
+      <span id="aanbodCount" style="color:var(--muted);font-size:14px;">— auto's</span>
     </div>
     <div class="filters">
       <span class="filter-label">Filteren:</span>
@@ -405,17 +428,33 @@ footer{border-top:1px solid var(--border);padding:28px 40px;display:flex;justify
 <!-- OVER ONS -->
 <div id="page-over" class="page">
   <div class="section">
-    <div class="section-title" style="margin-bottom:24px;">Over NXT Motion</div>
+    <div class="section-title" style="margin-bottom:28px;">Over NXT Motion</div>
     <div class="over-grid">
       <div>
-        <p style="color:var(--muted);line-height:1.85;font-size:14px;margin-bottom:16px;">NXT Motion is een jong en gedreven autohandelsbedrijf gevestigd in Eindhoven. Wij geloven in eerlijke handel — geen verborgen kosten, geen verrassingen. Alleen kwaliteitsoccasions met persoonlijke begeleiding van begin tot eind.</p>
-        <p style="color:var(--muted);line-height:1.85;font-size:14px;margin-bottom:22px;">Elke auto die wij verkopen wordt geleverd met garantie via onze partner Autotrust, zodat jij met vertrouwen wegrijdt.</p>
+        <p style="color:var(--muted);line-height:1.85;font-size:15px;margin-bottom:18px;">NXT Motion is een jong en gedreven autohandelsbedrijf gevestigd in Eindhoven. Wij geloven in eerlijke handel — geen verborgen kosten, geen verrassingen. Alleen kwaliteitsoccasions met persoonlijke begeleiding van begin tot eind.</p>
+        <p style="color:var(--muted);line-height:1.85;font-size:15px;margin-bottom:24px;">Elke auto die wij verkopen wordt geleverd met garantie via onze partner Autotrust, zodat jij met vertrouwen wegrijdt.</p>
         <div class="team">
-          <div class="team-member"><div class="team-avatar">IM</div><div class="team-name">Imran</div><div class="team-role">Mede-eigenaar</div><div style="font-size:11px;color:var(--muted);margin-top:6px;">06 17 15 29 16</div></div>
-          <div class="team-member"><div class="team-avatar">BD</div><div class="team-name">Bilal de Jonge</div><div class="team-role">Mede-eigenaar</div><div style="font-size:11px;color:var(--muted);margin-top:6px;">06 17 55 25 35</div></div>
+          <div class="team-member">
+            <div class="team-avatar">IM</div>
+            <div class="team-name">Imran</div>
+            <div class="team-role">Mede-eigenaar</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:8px;">06 17 15 29 16</div>
+          </div>
+          <div class="team-member">
+            <div class="team-avatar">BD</div>
+            <div class="team-name">Bilal de Jonge</div>
+            <div class="team-role">Mede-eigenaar</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:8px;">06 17 55 25 35</div>
+          </div>
         </div>
       </div>
-      <div><div class="over-img"><div style="font-size:28px;opacity:.35;">📸</div><div style="font-size:12px;">Foto's volgen binnenkort</div></div></div>
+      <div>
+        <div class="over-img">
+          <div style="font-size:36px;opacity:.3;">📸</div>
+          <div>Foto's volgen binnenkort</div>
+          <div style="font-size:12px;color:var(--muted2);margin-top:4px;">Team &amp; garage</div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -423,7 +462,7 @@ footer{border-top:1px solid var(--border);padding:28px 40px;display:flex;justify
 <!-- CONTACT -->
 <div id="page-contact" class="page">
   <div class="section">
-    <div class="section-title" style="margin-bottom:24px;">Contact</div>
+    <div class="section-title" style="margin-bottom:32px;">Contact</div>
     <div class="contact-grid">
       <div class="contact-info">
         <h3>Kom langs of bel ons</h3>
@@ -433,14 +472,28 @@ footer{border-top:1px solid var(--border);padding:28px 40px;display:flex;justify
         <div class="citem"><div class="cicon">✉️</div><div><div class="clabel">E-mail</div><div class="cval">Contact@nxt-motion.nl</div></div></div>
         <div class="citem"><div class="cicon">🕐</div><div><div class="clabel">Beschikbaarheid</div><div class="cval">7 dagen per week, altijd op afspraak</div></div></div>
         <div class="wa-contact-btns">
-          <a class="wa-contact-btn" href="https://wa.me/31617152916" target="_blank"><svg width="15" height="15" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.533 5.858L.057 23.428a.5.5 0 00.609.61l5.692-1.49A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.882a9.87 9.87 0 01-5.031-1.377l-.36-.214-3.733.978.998-3.648-.235-.374A9.861 9.861 0 012.118 12C2.118 6.52 6.52 2.118 12 2.118S21.882 6.52 21.882 12 17.48 21.882 12 21.882z"/></svg>WhatsApp Imran</a>
-          <a class="wa-contact-btn" href="https://wa.me/31617552535" target="_blank"><svg width="15" height="15" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.533 5.858L.057 23.428a.5.5 0 00.609.61l5.692-1.49A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.882a9.87 9.87 0 01-5.031-1.377l-.36-.214-3.733.978.998-3.648-.235-.374A9.861 9.861 0 012.118 12C2.118 6.52 6.52 2.118 12 2.118S21.882 6.52 21.882 12 17.48 21.882 12 21.882z"/></svg>WhatsApp Bilal</a>
+          <a class="wa-contact-btn" href="https://wa.me/31617152916" target="_blank">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.533 5.858L.057 23.428a.5.5 0 00.609.61l5.692-1.49A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.882a9.87 9.87 0 01-5.031-1.377l-.36-.214-3.733.978.998-3.648-.235-.374A9.861 9.861 0 012.118 12C2.118 6.52 6.52 2.118 12 2.118S21.882 6.52 21.882 12 17.48 21.882 12 21.882z"/></svg>
+            WhatsApp Imran
+          </a>
+          <a class="wa-contact-btn" href="https://wa.me/31617552535" target="_blank">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.533 5.858L.057 23.428a.5.5 0 00.609.61l5.692-1.49A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.882a9.87 9.87 0 01-5.031-1.377l-.36-.214-3.733.978.998-3.648-.235-.374A9.861 9.861 0 012.118 12C2.118 6.52 6.52 2.118 12 2.118S21.882 6.52 21.882 12 17.48 21.882 12 21.882z"/></svg>
+            WhatsApp Bilal
+          </a>
         </div>
       </div>
       <div>
         <div class="form-group"><label>Naam</label><input type="text" id="cName" placeholder="Jouw naam" autocomplete="name"></div>
         <div class="form-group"><label>E-mail of telefoonnummer</label><input type="text" id="cEmail" placeholder="jouw@email.nl of 06..." autocomplete="email"></div>
-        <div class="form-group"><label>Onderwerp</label><select id="cSubject"><option>Interesse in een auto</option><option>Proefrit aanvragen</option><option>Mijn auto verkopen</option><option>Vraag over garantie</option><option>Algemene vraag</option></select></div>
+        <div class="form-group"><label>Onderwerp</label>
+          <select id="cSubject">
+            <option>Interesse in een auto</option>
+            <option>Proefrit aanvragen</option>
+            <option>Mijn auto verkopen</option>
+            <option>Vraag over garantie</option>
+            <option>Algemene vraag</option>
+          </select>
+        </div>
         <div class="form-group"><label>Bericht</label><textarea id="cMsg" placeholder="Stel je vraag of laat je nummer achter..."></textarea></div>
         <button class="btn-primary" onclick="submitContact()" style="width:100%;">Verstuur bericht</button>
         <div class="form-success" id="formSuccess">✓ Bericht ontvangen! We nemen zo snel mogelijk contact op.</div>
@@ -466,11 +519,11 @@ footer{border-top:1px solid var(--border);padding:28px 40px;display:flex;justify
     <div class="admin-top">
       <h2>Auto's beheren</h2>
       <div class="badge-admin">Admin</div>
-      <div style="margin-left:auto;"><button class="btn-ghost" onclick="go('home')" style="font-size:12px;padding:7px 15px;">← Terug</button></div>
+      <div style="margin-left:auto;"><button class="btn-ghost" onclick="go('home')" style="font-size:13px;padding:9px 18px;">← Terug naar site</button></div>
     </div>
-    <div style="font-size:12px;color:var(--muted);margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px;">Huidige auto's</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:14px;text-transform:uppercase;letter-spacing:.5px;">Huidige auto's</div>
     <div id="adminList"></div>
-    <div style="height:24px;"></div>
+    <div style="height:28px;"></div>
     <div class="add-form">
       <h3>Nieuwe auto toevoegen</h3>
       <div class="add-grid">
@@ -478,7 +531,9 @@ footer{border-top:1px solid var(--border);padding:28px 40px;display:flex;justify
         <div class="form-group"><label>Model</label><input type="text" id="aModel" placeholder="bijv. 3-Serie 320d" autocomplete="off"></div>
         <div class="form-group"><label>Bouwjaar</label><input type="number" id="aYear" placeholder="2021" min="1990" max="2030" inputmode="numeric"></div>
         <div class="form-group"><label>Kilometerstand (km)</label><input type="number" id="aKm" placeholder="45000" min="0" inputmode="numeric"></div>
-        <div class="form-group"><label>Brandstof</label><select id="aFuel"><option>Benzine</option><option>Diesel</option><option>Elektrisch</option><option>Hybride</option><option>LPG</option></select></div>
+        <div class="form-group"><label>Brandstof</label>
+          <select id="aFuel"><option>Benzine</option><option>Diesel</option><option>Elektrisch</option><option>Hybride</option><option>LPG</option></select>
+        </div>
         <div class="form-group"><label>Prijs (€)</label><input type="number" id="aPrice" placeholder="15000" min="0" inputmode="numeric"></div>
         <div class="form-group full">
           <label>Foto uploaden</label>
@@ -487,51 +542,47 @@ footer{border-top:1px solid var(--border);padding:28px 40px;display:flex;justify
             <div class="upload-area-text">📷 Klik of sleep een foto hierheen<br><span>JPG, PNG, WEBP — max 10MB</span></div>
           </div>
           <div class="upload-progress" id="uploadProgress"></div>
-          <div style="font-size:11px;color:var(--muted);margin-top:6px;">Of plak een directe URL:</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:8px;">Of plak een directe URL:</div>
           <input type="url" id="aImg" placeholder="https://i.imgur.com/..." oninput="previewImg()" autocomplete="off" style="margin-top:6px;">
         </div>
       </div>
       <div class="img-preview" id="imgPreview">Geen foto — upload een bestand of voeg een URL toe</div>
-      <button class="btn-primary" onclick="addCar()" style="margin-top:14px;">Auto toevoegen</button>
+      <button class="btn-primary" onclick="addCar()" style="margin-top:16px;">Auto toevoegen</button>
     </div>
   </div>
 </div>
 
 <footer>
   <div class="logo">NXT MOTION</div>
-  <p style="color:var(--muted2);font-size:12px;">Mimosaplein 5, Eindhoven · Contact@nxt-motion.nl</p>
+  <p style="color:var(--muted2);font-size:13px;">Mimosaplein 5, Eindhoven · Contact@nxt-motion.nl</p>
   <div class="footer-links">
     <a href="https://www.autotrust.nl/algemene-garantie-uitleg" target="_blank">Garantie uitleg</a>
     <a onclick="go('contact')">Contact</a>
-    <a onclick="go('login')" style="color:var(--muted2);font-size:11px;">⚙</a>
+    <a onclick="go('login')" style="color:var(--muted2);font-size:12px;">⚙</a>
   </div>
 </footer>
-</div>
 
 <script>
 const ADMIN_PW='nxtmotion2024';
-let cars=[],loggedIn=false,menuOpen=false,waOpen=false;
+let cars=[],loggedIn=false,waOpen=false;
 
 // ── CORNER-ANCHORED DRAGGABLE WA ──
 (function(){
   const el=document.getElementById('waFloat');
   const btn=document.getElementById('waBtn');
   const popup=document.getElementById('waPopup');
-  const MARGIN=16;
-  let dragging=false,moved=false;
-  let startCX,startCY,startEL,startET;
+  const MARGIN=20;
+  let dragging=false,moved=false,startCX,startCY,startEL,startET;
   let cornerH='right',cornerV='bottom';
 
-  function btnSize(){return btn.offsetWidth||62;}
-
-  function setPopupDirection(){
+  function btnSize(){return btn.offsetWidth||68;}
+  function setPopupDir(){
     popup.classList.toggle('above',cornerV==='bottom');
     popup.classList.toggle('below',cornerV==='top');
     popup.classList.toggle('align-right',cornerH==='right');
     popup.classList.toggle('align-left',cornerH==='left');
   }
-
-  function placeAtCorner(h,v,animate){
+  function placeCorner(h,v,animate){
     cornerH=h;cornerV=v;
     const W=window.innerWidth,H=window.innerHeight,S=btnSize();
     const tL=h==='left'?MARGIN:W-S-MARGIN;
@@ -542,23 +593,16 @@ let cars=[],loggedIn=false,menuOpen=false,waOpen=false;
     }
     el.style.left=tL+'px';el.style.top=tT+'px';
     el.style.right='';el.style.bottom='';
-    setPopupDirection();
+    setPopupDir();
   }
-
-  function snapFromCurrent(){
+  function snap(){
     const W=window.innerWidth,H=window.innerHeight,S=btnSize();
     const r=el.getBoundingClientRect();
-    const cx=r.left+S/2,cy=r.top+S/2;
-    placeAtCorner(cx<W/2?'left':'right',cy<H/2?'top':'bottom',true);
+    placeCorner(r.left+S/2<W/2?'left':'right',r.top+S/2<H/2?'top':'bottom',true);
   }
+  placeCorner('right','bottom',false);
 
-  placeAtCorner('right','bottom',false);
-
-  function startDrag(cx,cy){
-    dragging=true;moved=false;startCX=cx;startCY=cy;
-    const r=el.getBoundingClientRect();startEL=r.left;startET=r.top;
-    el.style.transition='none';
-  }
+  function startDrag(cx,cy){dragging=true;moved=false;startCX=cx;startCY=cy;const r=el.getBoundingClientRect();startEL=r.left;startET=r.top;el.style.transition='none';}
   function moveDrag(cx,cy){
     if(!dragging)return;
     const dx=cx-startCX,dy=cy-startCY;
@@ -569,24 +613,21 @@ let cars=[],loggedIn=false,menuOpen=false,waOpen=false;
   }
   function endDrag(){
     if(!dragging)return;dragging=false;
-    if(moved){snapFromCurrent();}
-    else{waOpen=!waOpen;popup.classList.toggle('open',waOpen);setPopupDirection();}
+    if(moved){snap();}
+    else{waOpen=!waOpen;popup.classList.toggle('open',waOpen);setPopupDir();}
   }
-
   btn.addEventListener('mousedown',e=>{e.preventDefault();startDrag(e.clientX,e.clientY);});
   document.addEventListener('mousemove',e=>{moveDrag(e.clientX,e.clientY);});
   document.addEventListener('mouseup',()=>{endDrag();});
   btn.addEventListener('touchstart',e=>{const t=e.touches[0];startDrag(t.clientX,t.clientY);},{passive:true});
   document.addEventListener('touchmove',e=>{if(dragging){const t=e.touches[0];moveDrag(t.clientX,t.clientY);}},{passive:true});
   document.addEventListener('touchend',()=>{endDrag();},{passive:true});
-  document.addEventListener('click',e=>{
-    if(!e.target.closest('.wa-float')){waOpen=false;popup.classList.remove('open');}
-  });
+  document.addEventListener('click',e=>{if(!e.target.closest('.wa-float')){waOpen=false;popup.classList.remove('open');}});
+  window.addEventListener('resize',()=>placeCorner(cornerH,cornerV,false));
 })();
 
-function toggleMenu(){menuOpen=!menuOpen;document.getElementById('mobileMenu').classList.toggle('open',menuOpen);}
-function closeMenu(){menuOpen=false;document.getElementById('mobileMenu').classList.remove('open');}
-document.addEventListener('click',e=>{if(!e.target.closest('nav')&&!e.target.closest('.mobile-menu'))closeMenu();});
+function openMenu(){document.getElementById('mobileMenu').classList.add('open');document.body.style.overflow='hidden';}
+function closeMenu(){document.getElementById('mobileMenu').classList.remove('open');document.body.style.overflow='';}
 
 function go(p,carId){
   if(p==='admin'&&!loggedIn){go('login');return;}
@@ -598,24 +639,26 @@ function go(p,carId){
   window.scrollTo(0,0);
 }
 
-async function loadCars(){
-  try{const r=await window.storage.get('nxtmotion_cars_v2');if(r&&r.value)cars=JSON.parse(r.value);}catch(e){}
+const STORAGE_KEY='nxtmotion_cars_v2';
+function loadCars(){
+  try{const d=localStorage.getItem(STORAGE_KEY);if(d)cars=JSON.parse(d);}catch(e){}
   if(!cars||!cars.length)cars=defaultCars();
   renderAll();
 }
+function saveCars(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(cars));}catch(e){}}
 function defaultCars(){return[
   {id:1,make:'Volkswagen',model:'Golf 1.5 TSI Comfortline',year:'2021',km:'38.000',fuel:'Benzine',price:22500,img:'',sold:false},
   {id:2,make:'BMW',model:'3 Serie 320d Sport Line',year:'2019',km:'71.000',fuel:'Diesel',price:28900,img:'',sold:false},
   {id:3,make:'Toyota',model:'Yaris Cross 1.5 Hybrid',year:'2022',km:'21.000',fuel:'Hybride',price:26750,img:'',sold:false},
 ];}
-async function saveCars(){try{await window.storage.set('nxtmotion_cars_v2',JSON.stringify(cars));}catch(e){}}
-function svgPh(){return`<svg width="72" height="44" viewBox="0 0 72 44" fill="none" style="opacity:.2"><rect x="4" y="16" width="64" height="20" rx="5" fill="#888"/><rect x="12" y="8" width="40" height="14" rx="4" fill="#666"/><circle cx="18" cy="36" r="6" fill="#555"/><circle cx="54" cy="36" r="6" fill="#555"/></svg>`;}
+
+function svgPh(){return`<svg width="80" height="50" viewBox="0 0 72 44" fill="none" style="opacity:.2"><rect x="4" y="16" width="64" height="20" rx="5" fill="#888"/><rect x="12" y="8" width="40" height="14" rx="4" fill="#666"/><circle cx="18" cy="36" r="6" fill="#555"/><circle cx="54" cy="36" r="6" fill="#555"/></svg>`;}
 
 function carCardHTML(car){
   const sold=car.sold;
   const soldHTML=sold?'<div class="sold-badge">Verkocht</div><div class="sold-overlay"></div>':'';
   const img=car.img
-    ?`<div class="car-img-wrap">${soldHTML}<img src="${car.img}" alt="${car.make}" onerror="this.parentElement.innerHTML='${svgPh()}'"><div class="car-overlay"><div class="car-overlay-text">Bekijk details</div></div></div>`
+    ?`<div class="car-img-wrap">${soldHTML}<img src="${car.img}" alt="${car.make}" loading="lazy" onerror="this.parentElement.innerHTML='${svgPh()}'"><div class="car-overlay"><div class="car-overlay-text">Bekijk details</div></div></div>`
     :`<div class="car-img-wrap">${soldHTML}${svgPh()}<div class="car-overlay"><div class="car-overlay-text">Bekijk details</div></div></div>`;
   return`<div class="car-card" onclick="go('detail',${car.id})">
     ${img}
@@ -636,7 +679,7 @@ function renderDetail(id){
   const imgBlock=car.img
     ?`<div class="detail-img"><img src="${car.img}" alt="${car.make} ${car.model}" onerror="this.parentElement.innerHTML='${svgPh()}'"></div>`
     :`<div class="detail-img">${svgPh()}</div>`;
-  const soldNote=car.sold?`<div style="background:#3a1a1a;border:1px solid #5a2a2a;color:#e07070;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:16px;">Deze auto is al verkocht.</div>`:'';
+  const soldNote=car.sold?`<div style="background:#3a1a1a;border:1px solid #5a2a2a;color:#e07070;padding:12px 16px;border-radius:8px;font-size:14px;margin-bottom:18px;">Deze auto is al verkocht. Bekijk ons andere aanbod of neem contact op.</div>`:'';
   const ctaBlock=car.sold
     ?`<button class="btn-primary" onclick="go('aanbod')" style="width:100%;">Bekijk ander aanbod</button>`
     :`<a class="call-card" href="tel:+31617152916"><div class="call-card-left"><div class="call-avatar">IM</div><div><div class="call-name">Imran bellen</div><div class="call-num">06 17 15 29 16</div></div></div><div class="call-icon">📞</div></a>
@@ -644,9 +687,9 @@ function renderDetail(id){
   document.getElementById('detailContent').innerHTML=`
     ${imgBlock}
     <div>
-      <div class="detail-badge">${car.make}</div>
+      <span class="detail-badge">${car.make}</span>
       <div class="detail-title">${car.model}</div>
-      <div class="detail-price">€ ${Number(car.price).toLocaleString('nl-NL')}</div>
+      <span class="detail-price">€ ${Number(car.price).toLocaleString('nl-NL')}</span>
       ${soldNote}
       <div class="detail-specs-grid">
         <div class="detail-spec-item"><div class="detail-spec-label">Bouwjaar</div><div class="detail-spec-val">${car.year}</div></div>
@@ -680,19 +723,19 @@ function updateMerkFilter(){
 }
 function renderGrid(id,list){
   const el=document.getElementById(id);
-  if(!list||!list.length){el.innerHTML='<div class="no-cars"><div style="font-size:26px;margin-bottom:8px;">🚗</div><div>Geen auto\'s gevonden.</div></div>';return;}
+  if(!list||!list.length){el.innerHTML=`<div class="no-cars">🚗<br><br>Geen auto's gevonden.</div>`;return;}
   el.innerHTML=list.map(carCardHTML).join('');
 }
 function fuelOpts(sel){return['Benzine','Diesel','Elektrisch','Hybride','LPG'].map(f=>`<option${f===sel?' selected':''}>${f}</option>`).join('');}
 function renderAdminList(){
   const el=document.getElementById('adminList');
-  if(!cars.length){el.innerHTML='<div style="color:var(--muted);font-size:13px;padding:10px 0;">Nog geen auto\'s toegevoegd.</div>';return;}
+  if(!cars.length){el.innerHTML='<div style="color:var(--muted);font-size:14px;padding:12px 0;">Nog geen auto\'s toegevoegd.</div>';return;}
   el.innerHTML=cars.map(c=>`
     <div class="admin-list-item" id="ali-${c.id}">
       <div class="admin-list-main">
         <div class="admin-thumb">${c.img?`<img src="${c.img}" onerror="this.style.display='none'">`:svgPh()}</div>
         <div class="admin-info">
-          <div class="admin-name">${c.make} ${c.model} (${c.year})${c.sold?' <span style="color:#c05050;font-size:10px;margin-left:6px;">VERKOCHT</span>':''}</div>
+          <div class="admin-name">${c.make} ${c.model} (${c.year})${c.sold?' <span style="color:#c05050;font-size:11px;margin-left:6px;">VERKOCHT</span>':''}</div>
           <div class="admin-sub">€ ${Number(c.price).toLocaleString('nl-NL')} · ${c.km} km · ${c.fuel}</div>
         </div>
         <div class="admin-actions">
@@ -703,13 +746,13 @@ function renderAdminList(){
       </div>
       <div class="edit-panel" id="ep-${c.id}">
         <div class="edit-grid">
-          <div class="form-group"><label>Merk</label><input type="text" id="em-${c.id}" value="${c.make}" autocomplete="off"></div>
-          <div class="form-group"><label>Model</label><input type="text" id="emo-${c.id}" value="${c.model}" autocomplete="off"></div>
+          <div class="form-group"><label>Merk</label><input type="text" id="em-${c.id}" value="${c.make}"></div>
+          <div class="form-group"><label>Model</label><input type="text" id="emo-${c.id}" value="${c.model}"></div>
           <div class="form-group"><label>Bouwjaar</label><input type="number" id="ey-${c.id}" value="${c.year}" min="1990" max="2030" inputmode="numeric"></div>
           <div class="form-group"><label>Kilometerstand</label><input type="number" id="ek-${c.id}" value="${c.km}" min="0" inputmode="numeric"></div>
           <div class="form-group"><label>Brandstof</label><select id="ef-${c.id}">${fuelOpts(c.fuel)}</select></div>
           <div class="form-group"><label>Prijs (€)</label><input type="number" id="ep2-${c.id}" value="${c.price}" min="0" inputmode="numeric"></div>
-          <div class="form-group full"><label>Foto URL</label><input type="url" id="ei-${c.id}" value="${c.img||''}" autocomplete="off"></div>
+          <div class="form-group full"><label>Foto URL</label><input type="url" id="ei-${c.id}" value="${c.img||''}"></div>
         </div>
         <div class="edit-actions">
           <button class="save-btn" onclick="saveEdit(${c.id})">Opslaan</button>
@@ -719,16 +762,16 @@ function renderAdminList(){
     </div>`).join('');
 }
 function toggleEdit(id){document.getElementById('ep-'+id).classList.toggle('open');}
-function toggleSold(id){const idx=cars.findIndex(c=>c.id===id);if(idx<0)return;cars[idx].sold=!cars[idx].sold;saveCars();renderAll();}
+function toggleSold(id){const i=cars.findIndex(c=>c.id===id);if(i<0)return;cars[i].sold=!cars[i].sold;saveCars();renderAll();}
 function saveEdit(id){
-  const idx=cars.findIndex(c=>c.id===id);if(idx<0)return;
-  cars[idx]={...cars[idx],
-    make:document.getElementById('em-'+id).value.trim()||cars[idx].make,
-    model:document.getElementById('emo-'+id).value.trim()||cars[idx].model,
-    year:document.getElementById('ey-'+id).value.trim()||cars[idx].year,
-    km:document.getElementById('ek-'+id).value.trim()||cars[idx].km,
+  const i=cars.findIndex(c=>c.id===id);if(i<0)return;
+  cars[i]={...cars[i],
+    make:document.getElementById('em-'+id).value.trim()||cars[i].make,
+    model:document.getElementById('emo-'+id).value.trim()||cars[i].model,
+    year:document.getElementById('ey-'+id).value.trim()||cars[i].year,
+    km:document.getElementById('ek-'+id).value.trim()||cars[i].km,
     fuel:document.getElementById('ef-'+id).value,
-    price:+document.getElementById('ep2-'+id).value||cars[idx].price,
+    price:+document.getElementById('ep2-'+id).value||cars[i].price,
     img:document.getElementById('ei-'+id).value.trim(),
   };
   saveCars();renderAll();
@@ -755,22 +798,24 @@ async function handleUpload(){
     const fd=new FormData();fd.append('image',file);
     const res=await fetch('https://api.imgur.com/3/image',{method:'POST',headers:{Authorization:'Client-ID 546c25a59c58ad7'},body:fd});
     const data=await res.json();
-    if(data.success){
-      document.getElementById('aImg').value=data.data.link;
-      prog.style.color='#6dcf6d';prog.textContent='✓ Foto geüpload!';previewImg();
-    } else throw new Error();
-  } catch(e){prog.style.color='#c05050';prog.textContent='Upload mislukt — plak een URL handmatig.';}
+    if(data.success){document.getElementById('aImg').value=data.data.link;prog.style.color='#6dcf6d';prog.textContent='✓ Foto geüpload!';previewImg();}
+    else throw new Error();
+  }catch(e){prog.style.color='#c05050';prog.textContent='Upload mislukt — plak een URL handmatig.';}
 }
 function addCar(){
   const make=document.getElementById('aMake').value.trim();
   const model=document.getElementById('aModel').value.trim();
-  const year=document.getElementById('aYear').value.trim();
-  const km=document.getElementById('aKm').value.trim();
-  const fuel=document.getElementById('aFuel').value;
   const price=document.getElementById('aPrice').value;
-  const img=document.getElementById('aImg').value.trim();
   if(!make||!model||!price){alert('Vul minimaal merk, model en prijs in.');return;}
-  cars.unshift({id:Date.now(),make,model,year:year||'—',km:km||'—',fuel,price:+price,img,sold:false});
+  cars.unshift({id:Date.now(),
+    make,model,
+    year:document.getElementById('aYear').value.trim()||'—',
+    km:document.getElementById('aKm').value.trim()||'—',
+    fuel:document.getElementById('aFuel').value,
+    price:+price,
+    img:document.getElementById('aImg').value.trim(),
+    sold:false
+  });
   saveCars();renderAll();
   ['aMake','aModel','aYear','aKm','aPrice','aImg'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('imgPreview').innerHTML='Geen foto — upload een bestand of voeg een URL toe';
@@ -794,3 +839,5 @@ function submitContact(){
 }
 loadCars();
 </script>
+</body>
+</html>
