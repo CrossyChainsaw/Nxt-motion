@@ -1,0 +1,796 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{--bg:#0a0a0a;--bg2:#111;--bg3:#1a1a1a;--accent1:#e8596a;--accent2:#f0a58a;--text:#f0f0f0;--muted:#777;--muted2:#555;--border:#222;--radius:10px;}
+#app{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;}
+
+/* NAV */
+nav{display:flex;align-items:center;justify-content:space-between;padding:16px 40px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;background:rgba(10,10,10,0.95);backdrop-filter:blur(12px);}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:26px;background:linear-gradient(90deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:2px;cursor:pointer;}
+.nav-links{display:flex;gap:24px;}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:13px;cursor:pointer;transition:color .2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--text);}
+.nav-cta{background:linear-gradient(90deg,var(--accent1),var(--accent2));border:none;color:#fff;padding:8px 18px;border-radius:999px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;}
+.hamburger span{display:block;width:22px;height:2px;background:var(--text);border-radius:2px;}
+.mobile-menu{display:none;position:fixed;top:57px;left:0;right:0;background:rgba(10,10,10,0.98);border-bottom:1px solid var(--border);z-index:190;flex-direction:column;padding:12px 0;}
+.mobile-menu.open{display:flex;}
+.mobile-menu a{padding:14px 24px;color:var(--muted);font-size:15px;cursor:pointer;border-bottom:1px solid var(--border);}
+.mobile-menu a:last-child{border-bottom:none;}
+.mobile-menu a:hover{color:var(--text);}
+
+.page{display:none;animation:fadeIn .25s ease;}
+.page.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+/* HERO */
+.hero{padding:80px 40px 60px;text-align:center;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:700px;height:400px;background:radial-gradient(ellipse,rgba(232,89,106,0.12) 0%,transparent 68%);pointer-events:none;}
+.hero-tag{display:inline-block;border:1px solid var(--border);color:var(--muted);font-size:11px;padding:5px 14px;border-radius:999px;margin-bottom:20px;letter-spacing:1.5px;text-transform:uppercase;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(48px,8vw,84px);line-height:1;background:linear-gradient(135deg,#fff 40%,var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:16px;}
+.hero p{color:var(--muted);font-size:15px;max-width:460px;margin:0 auto 32px;line-height:1.75;}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.btn-primary{background:linear-gradient(90deg,var(--accent1),var(--accent2));border:none;color:#fff;padding:14px 28px;border-radius:999px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:opacity .2s,transform .15s;display:inline-block;text-decoration:none;}
+.btn-primary:hover{opacity:.88;transform:translateY(-1px);}
+.btn-ghost{background:transparent;border:2px solid rgba(240,165,138,0.5);color:var(--accent2);padding:14px 28px;border-radius:999px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s;}
+.btn-ghost:hover{border-color:var(--accent2);background:rgba(240,165,138,0.08);}
+
+/* STATS */
+.stats-bar{display:flex;justify-content:center;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin:0 40px;}
+.stat{flex:1;max-width:200px;padding:26px 16px;text-align:center;border-right:1px solid var(--border);}
+.stat:last-child{border-right:none;}
+.stat-num{font-family:'Bebas Neue',sans-serif;font-size:34px;background:linear-gradient(90deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.stat-label{color:var(--muted);font-size:11px;margin-top:2px;letter-spacing:.5px;text-transform:uppercase;}
+
+/* SECTION */
+.section{padding:56px 40px;}
+.section-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px;}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:1px;}
+.section-link{color:var(--accent2);font-size:13px;cursor:pointer;}
+
+/* FILTERS */
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px;align-items:center;}
+.filter-select{background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;cursor:pointer;transition:border-color .2s;}
+.filter-select:focus{border-color:var(--accent1);}
+.filter-label{font-size:12px;color:var(--muted);white-space:nowrap;}
+
+/* CARS */
+.cars-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px;}
+.car-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:transform .2s,border-color .2s;cursor:pointer;position:relative;}
+.car-card:hover{transform:translateY(-4px);border-color:#333;}
+.car-card:hover .car-overlay{opacity:1;}
+.sold-badge{position:absolute;top:12px;left:12px;background:#c0392b;color:#fff;font-size:10px;font-weight:600;padding:4px 10px;border-radius:4px;letter-spacing:.8px;text-transform:uppercase;z-index:2;}
+.sold-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.45);z-index:1;pointer-events:none;}
+.car-img-wrap{width:100%;height:172px;background:var(--bg3);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;}
+.car-img-wrap img{width:100%;height:100%;object-fit:cover;}
+.car-overlay{position:absolute;inset:0;background:rgba(232,89,106,0.15);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;z-index:1;}
+.car-overlay-text{background:rgba(0,0,0,0.7);color:#fff;font-size:12px;padding:6px 14px;border-radius:999px;}
+.car-body{padding:14px 16px;}
+.car-make{font-size:10px;color:var(--accent1);text-transform:uppercase;letter-spacing:1.2px;font-weight:500;}
+.car-model{font-size:16px;font-weight:500;margin:2px 0 8px;}
+.car-specs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.spec{font-size:10px;color:var(--muted);background:var(--bg3);padding:3px 8px;border-radius:4px;}
+.car-footer{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);padding-top:12px;}
+.car-price{font-family:'Bebas Neue',sans-serif;font-size:21px;background:linear-gradient(90deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.car-price.sold-price{-webkit-text-fill-color:var(--muted);background:none;text-decoration:line-through;}
+.car-detail-hint{font-size:11px;color:var(--muted);}
+.no-cars{text-align:center;padding:50px 20px;color:var(--muted);grid-column:1/-1;}
+
+/* DETAIL */
+.detail-back{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;cursor:pointer;margin-bottom:24px;}
+.detail-back:hover{color:var(--text);}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;}
+.detail-img{width:100%;aspect-ratio:16/10;background:var(--bg3);border-radius:var(--radius);overflow:hidden;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);}
+.detail-img img{width:100%;height:100%;object-fit:cover;}
+.detail-badge{font-size:10px;color:var(--accent1);text-transform:uppercase;letter-spacing:1.2px;font-weight:500;margin-bottom:8px;}
+.detail-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(28px,4vw,40px);line-height:1.1;margin-bottom:16px;color:var(--text);}
+.detail-price{font-family:'Bebas Neue',sans-serif;font-size:38px;background:linear-gradient(90deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:20px;}
+.detail-specs-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px;}
+.detail-spec-item{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px 14px;}
+.detail-spec-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;}
+.detail-spec-val{font-size:14px;font-weight:500;color:var(--text);}
+.detail-spec-val a{color:var(--accent2);text-decoration:none;}
+.detail-spec-val a:hover{text-decoration:underline;}
+.detail-cta{display:flex;flex-direction:column;gap:10px;}
+.call-card{display:flex;align-items:center;justify-content:space-between;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;cursor:pointer;transition:border-color .2s;text-decoration:none;}
+.call-card:hover{border-color:var(--accent2);}
+.call-card-left{display:flex;align-items:center;gap:12px;}
+.call-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:#fff;flex-shrink:0;}
+.call-name{font-size:14px;font-weight:500;color:var(--text);}
+.call-num{font-size:12px;color:var(--muted);margin-top:1px;}
+.call-icon{font-size:18px;}
+
+/* GARANTIE */
+.garantie-banner{margin:0 40px 40px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:22px 26px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
+.garantie-icon{width:46px;height:46px;background:linear-gradient(135deg,var(--accent1),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.garantie-text{flex:1;min-width:180px;}
+.garantie-text h4{font-size:14px;font-weight:500;margin-bottom:3px;}
+.garantie-text p{font-size:12px;color:var(--muted);line-height:1.6;}
+.garantie-link a{font-size:12px;color:var(--accent2);text-decoration:none;border:1px solid var(--border);padding:7px 14px;border-radius:999px;white-space:nowrap;display:inline-block;transition:border-color .2s;}
+.garantie-link a:hover{border-color:var(--accent2);}
+
+/* OVER ONS */
+.over-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start;}
+.over-img{background:var(--bg3);border:1px dashed var(--border);border-radius:var(--radius);height:240px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--muted2);font-size:13px;}
+.team{display:flex;gap:12px;margin-top:20px;}
+.team-member{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center;}
+.team-avatar{width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:19px;color:#fff;margin:0 auto 10px;}
+.team-name{font-size:14px;font-weight:500;color:var(--text);}
+.team-role{font-size:11px;color:var(--muted);margin-top:2px;}
+
+/* CONTACT */
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:36px;max-width:860px;margin:0 auto;}
+.contact-info h3{font-family:'Bebas Neue',sans-serif;font-size:24px;margin-bottom:18px;}
+.citem{display:flex;gap:14px;align-items:flex-start;margin-bottom:18px;}
+.cicon{width:36px;height:36px;background:var(--bg3);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.clabel{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+.cval{font-size:13px;margin-top:2px;line-height:1.6;color:var(--text);}
+.wa-contact-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px;}
+.wa-contact-btn{display:flex;align-items:center;gap:7px;background:#25d366;color:#fff;padding:10px 18px;border-radius:999px;text-decoration:none;font-size:13px;font-weight:500;}
+.wa-contact-btn:hover{opacity:.88;}
+.form-group{margin-bottom:14px;}
+.form-group label{display:block;font-size:11px;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px;}
+.form-group input,.form-group textarea,.form-group select{width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:10px 13px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;transition:border-color .2s;}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--accent1);}
+.form-group textarea{resize:vertical;min-height:90px;}
+.form-success{background:rgba(80,180,80,0.1);border:1px solid rgba(80,180,80,0.25);color:#6dcf6d;padding:11px 15px;border-radius:8px;font-size:13px;margin-top:10px;display:none;}
+
+/* ADMIN */
+.admin-wrap{max-width:860px;margin:0 auto;padding:36px 40px;}
+.admin-top{display:flex;align-items:center;gap:12px;margin-bottom:28px;flex-wrap:wrap;}
+.admin-top h2{font-family:'Bebas Neue',sans-serif;font-size:26px;}
+.badge-admin{font-size:10px;background:var(--accent1);color:#fff;padding:3px 8px;border-radius:4px;letter-spacing:1px;text-transform:uppercase;}
+.admin-list-item{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:10px;}
+.admin-list-main{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.admin-thumb{width:60px;height:42px;background:var(--bg3);border-radius:6px;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.admin-thumb img{width:100%;height:100%;object-fit:cover;}
+.admin-info{flex:1;min-width:0;}
+.admin-name{font-size:13px;font-weight:500;color:var(--text);}
+.admin-sub{font-size:12px;color:var(--muted);margin-top:1px;}
+.admin-actions{display:flex;gap:6px;flex-wrap:wrap;}
+.edit-btn{background:transparent;border:1px solid var(--border);color:var(--muted);padding:6px 12px;border-radius:6px;font-size:11px;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.edit-btn:hover{border-color:var(--accent2);color:var(--accent2);}
+.sold-btn{background:transparent;border:1px solid #3a1a1a;color:#c05050;padding:6px 12px;border-radius:6px;font-size:11px;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.sold-btn:hover{background:#1e0e0e;}
+.sold-btn.active{background:#c0392b;border-color:#c0392b;color:#fff;}
+.del-btn{background:transparent;border:1px solid #2e1a1a;color:#c05050;padding:6px 12px;border-radius:6px;font-size:11px;cursor:pointer;white-space:nowrap;}
+.del-btn:hover{background:#1e0e0e;}
+.edit-panel{display:none;border-top:1px solid var(--border);margin-top:12px;padding-top:14px;}
+.edit-panel.open{display:block;}
+.edit-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.edit-grid .full{grid-column:1/-1;}
+.edit-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+.save-btn{background:linear-gradient(90deg,var(--accent1),var(--accent2));border:none;color:#fff;padding:8px 18px;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;}
+.cancel-btn{background:transparent;border:1px solid var(--border);color:var(--muted);padding:8px 14px;border-radius:6px;font-size:12px;cursor:pointer;}
+.upload-area{border:2px dashed var(--border);border-radius:8px;padding:18px;text-align:center;cursor:pointer;transition:border-color .2s;margin-top:8px;position:relative;}
+.upload-area:hover{border-color:var(--accent1);}
+.upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.upload-area-text{font-size:13px;color:var(--muted);}
+.upload-area-text span{color:var(--accent2);}
+.upload-progress{display:none;margin-top:8px;font-size:12px;color:var(--muted);}
+.add-form{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:22px;}
+.add-form h3{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--muted);margin-bottom:16px;}
+.add-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.add-grid .full{grid-column:1/-1;}
+.img-preview{width:100%;height:130px;background:var(--bg3);border:1px dashed var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px;margin-top:8px;overflow:hidden;}
+.img-preview img{width:100%;height:100%;object-fit:cover;}
+.login-wrap{max-width:340px;margin:70px auto;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:32px;}
+.login-wrap h2{font-family:'Bebas Neue',sans-serif;font-size:24px;margin-bottom:4px;color:var(--text);}
+.login-wrap p{color:var(--muted);font-size:12px;margin-bottom:22px;}
+.login-err{color:#c05050;font-size:12px;margin-top:8px;display:none;}
+
+/* WA FLOAT */
+.wa-float{position:fixed;z-index:300;touch-action:none;user-select:none;}
+.wa-main{width:52px;height:52px;background:#25d366;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:grab;box-shadow:0 4px 16px rgba(37,211,102,0.35);}
+.wa-main:active{cursor:grabbing;}
+.wa-popup{position:absolute;display:none;flex-direction:column;gap:8px;white-space:nowrap;}
+.wa-popup.open{display:flex;}
+.wa-popup.above{bottom:calc(100% + 10px);top:auto;}
+.wa-popup.below{top:calc(100% + 10px);bottom:auto;}
+.wa-popup.align-right{right:0;left:auto;align-items:flex-end;}
+.wa-popup.align-left{left:0;right:auto;align-items:flex-start;}
+.wa-person{display:flex;align-items:center;gap:10px;background:var(--bg2);border:1px solid var(--border);border-radius:999px;padding:8px 16px 8px 10px;cursor:pointer;transition:border-color .2s;text-decoration:none;}
+.wa-person:hover{border-color:#25d366;}
+.wa-p-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;color:#fff;flex-shrink:0;}
+.wa-p-name{font-size:13px;font-weight:500;color:var(--text);}
+.wa-p-role{font-size:11px;color:var(--muted);}
+
+footer{border-top:1px solid var(--border);padding:28px 40px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.footer-links{display:flex;gap:20px;flex-wrap:wrap;}
+.footer-links a{color:var(--muted2);font-size:12px;text-decoration:none;cursor:pointer;}
+.footer-links a:hover{color:var(--muted);}
+
+/* ===================== MOBILE ===================== */
+@media(max-width:660px){
+  /* NAV */
+  nav{padding:12px 16px;}
+  .nav-links,.nav-cta{display:none;}
+  .hamburger{display:flex;}
+
+  /* HERO — compact, geen rare lege ruimte */
+  .hero{padding:36px 20px 28px;}
+  .hero-tag{font-size:10px;padding:4px 12px;margin-bottom:14px;}
+  .hero h1{font-size:clamp(40px,11vw,58px);margin-bottom:12px;}
+  .hero p{font-size:14px;margin-bottom:22px;}
+  .hero-btns{flex-direction:column;align-items:stretch;gap:10px;max-width:100%;}
+  .btn-primary,.btn-ghost{width:100%;padding:15px 20px;font-size:15px;text-align:center;}
+
+  /* STATS — 2x2 grid, gelijke vakjes */
+  .stats-bar{margin:0;display:grid;grid-template-columns:1fr 1fr;border-left:none;border-right:none;}
+  .stat{max-width:none;border-right:none;border-bottom:1px solid var(--border);padding:16px 12px;}
+  .stat:nth-child(odd){border-right:1px solid var(--border);}
+  .stat:nth-child(3),.stat:nth-child(4){border-bottom:none;}
+  .stat-num{font-size:28px;}
+  .stat-label{font-size:10px;}
+
+  /* SECTION */
+  .section{padding:28px 16px;}
+  .section-title{font-size:24px;}
+
+  /* CARS — 1 kolom, grotere foto op mobiel */
+  .cars-grid{grid-template-columns:1fr;gap:14px;}
+  .car-img-wrap{height:200px;}
+  .car-model{font-size:17px;}
+  .car-footer{flex-wrap:wrap;gap:8px;}
+  .car-price{font-size:24px;}
+
+  /* FILTERS — compact scroll */
+  .filters{gap:6px;flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;}
+  .filter-label{display:none;}
+  .filter-select{font-size:12px;padding:7px 10px;flex-shrink:0;min-width:0;}
+
+  /* GARANTIE BANNER — gestapeld */
+  .garantie-banner{margin:0 16px 24px;padding:16px;gap:12px;flex-direction:column;align-items:flex-start;}
+  .garantie-link{width:100%;}
+  .garantie-link a{width:100%;text-align:center;display:block;padding:10px;}
+
+  /* DETAIL — gestapeld, ruim */
+  .detail-grid{grid-template-columns:1fr;gap:20px;}
+  .detail-img{aspect-ratio:16/9;}
+  .detail-title{font-size:28px;}
+  .detail-price{font-size:32px;margin-bottom:16px;}
+  .detail-specs-grid{grid-template-columns:1fr 1fr;gap:8px;}
+  .detail-spec-item{padding:10px 12px;}
+  .detail-spec-label{font-size:9px;}
+  .detail-spec-val{font-size:13px;}
+  .call-card{padding:14px;}
+
+  /* OVER ONS — gestapeld, foto eerst weglaten op mobiel of klein houden */
+  .over-grid{grid-template-columns:1fr;gap:20px;}
+  .over-img{height:140px;font-size:12px;}
+  .team{flex-direction:row;gap:10px;}
+  .team-member{padding:12px 10px;}
+  .team-avatar{width:42px;height:42px;font-size:16px;}
+  .team-name{font-size:13px;}
+
+  /* CONTACT — gestapeld, info bovenaan */
+  .contact-grid{grid-template-columns:1fr;gap:24px;}
+  .contact-info h3{font-size:20px;margin-bottom:14px;}
+  .citem{margin-bottom:12px;}
+  .cicon{width:32px;height:32px;font-size:13px;flex-shrink:0;}
+  .cval{font-size:13px;}
+  .wa-contact-btns{flex-direction:column;gap:8px;}
+  .wa-contact-btn{justify-content:center;padding:12px 18px;font-size:14px;}
+
+  /* ADMIN */
+  .admin-wrap{padding:20px 16px;}
+  .edit-grid,.add-grid{grid-template-columns:1fr;}
+  .edit-grid .full,.add-grid .full{grid-column:1;}
+  .admin-actions{width:100%;margin-top:8px;}
+  .admin-list-main{gap:10px;}
+  .admin-thumb{width:52px;height:36px;}
+
+  /* FOOTER */
+  footer{flex-direction:column;text-align:center;padding:20px 16px;gap:12px;}
+  .footer-links{justify-content:center;gap:16px;}
+
+  /* WA FLOAT — groter op mobiel */
+  .wa-main{width:62px;height:62px;}
+  .wa-main svg{width:32px;height:32px;}
+  .wa-p-name{font-size:14px;}
+  .wa-p-role{font-size:12px;}
+  .wa-p-avatar{width:36px;height:36px;font-size:14px;}
+  .wa-person{padding:10px 18px 10px 12px;gap:12px;}
+}
+</style>
+
+<div id="app">
+<nav>
+  <div class="logo" onclick="go('home')">NXT MOTION</div>
+  <div class="nav-links">
+    <a onclick="go('home')" id="nl-home" class="active">Home</a>
+    <a onclick="go('aanbod')" id="nl-aanbod">Aanbod</a>
+    <a onclick="go('over')" id="nl-over">Over ons</a>
+    <a onclick="go('contact')" id="nl-contact">Contact</a>
+  </div>
+  <button class="nav-cta" onclick="go('contact')">Contact</button>
+  <div class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a onclick="go('home');closeMenu()">Home</a>
+  <a onclick="go('aanbod');closeMenu()">Aanbod</a>
+  <a onclick="go('over');closeMenu()">Over ons</a>
+  <a onclick="go('contact');closeMenu()">Contact</a>
+</div>
+
+<!-- WA FLOAT -->
+<div class="wa-float" id="waFloat" style="bottom:24px;right:24px;">
+  <div class="wa-popup" id="waPopup">
+    <a class="wa-person" href="https://wa.me/31617152916" target="_blank">
+      <div class="wa-p-avatar">IM</div>
+      <div><div class="wa-p-name">Imran</div><div class="wa-p-role">06 17 15 29 16</div></div>
+    </a>
+    <a class="wa-person" href="https://wa.me/31617552535" target="_blank">
+      <div class="wa-p-avatar">BD</div>
+      <div><div class="wa-p-name">Bilal</div><div class="wa-p-role">06 17 55 25 35</div></div>
+    </a>
+  </div>
+  <div class="wa-main" id="waBtn">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.533 5.858L.057 23.428a.5.5 0 00.609.61l5.692-1.49A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.882a9.87 9.87 0 01-5.031-1.377l-.36-.214-3.733.978.998-3.648-.235-.374A9.861 9.861 0 012.118 12C2.118 6.52 6.52 2.118 12 2.118S21.882 6.52 21.882 12 17.48 21.882 12 21.882z"/></svg>
+  </div>
+</div>
+
+<!-- HOME -->
+<div id="page-home" class="page active">
+  <div class="hero">
+    <div class="hero-tag">Occasion dealer · Eindhoven</div>
+    <h1>JOUW VOLGENDE<br>AUTO STAAT KLAAR</h1>
+    <p>Eerlijk advies, transparante prijzen en persoonlijke service — altijd op afspraak, 7 dagen per week.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="go('aanbod')">Bekijk aanbod</button>
+      <button class="btn-ghost" onclick="go('contact')">Plan een afspraak</button>
+    </div>
+  </div>
+  <div class="stats-bar">
+    <div class="stat"><div class="stat-num" id="statCount">—</div><div class="stat-label">Beschikbare auto's</div></div>
+    <div class="stat"><div class="stat-num">7/7</div><div class="stat-label">Dagen bereikbaar</div></div>
+    <div class="stat"><div class="stat-num">100%</div><div class="stat-label">Op afspraak</div></div>
+    <div class="stat"><div class="stat-num">✓</div><div class="stat-label">Autotrust garantie</div></div>
+  </div>
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Recent aanbod</div>
+      <div class="section-link" onclick="go('aanbod')">Alles bekijken →</div>
+    </div>
+    <div class="cars-grid" id="homeGrid"></div>
+  </div>
+  <div class="garantie-banner">
+    <div class="garantie-icon">🛡️</div>
+    <div class="garantie-text"><h4>Autotrust garantie op elk voertuig</h4><p>Wij werken samen met Autotrust voor garantie op al onze occasions.</p></div>
+    <div class="garantie-link"><a href="https://www.autotrust.nl/algemene-garantie-uitleg" target="_blank">Bekijk uitleg →</a></div>
+  </div>
+</div>
+
+<!-- AANBOD -->
+<div id="page-aanbod" class="page">
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Ons aanbod</div>
+      <div class="section-link" id="aanbodCount" style="cursor:default;color:var(--muted);">— auto's</div>
+    </div>
+    <div class="filters">
+      <span class="filter-label">Filteren:</span>
+      <select class="filter-select" id="filterMerk" onchange="applyFilters()"><option value="">Alle merken</option></select>
+      <select class="filter-select" id="filterBrandstof" onchange="applyFilters()">
+        <option value="">Alle brandstof</option>
+        <option>Benzine</option><option>Diesel</option><option>Elektrisch</option><option>Hybride</option><option>LPG</option>
+      </select>
+      <select class="filter-select" id="filterSort" onchange="applyFilters()">
+        <option value="">Sortering</option>
+        <option value="price-asc">Prijs laag → hoog</option>
+        <option value="price-desc">Prijs hoog → laag</option>
+        <option value="year-desc">Nieuwste eerst</option>
+        <option value="year-asc">Oudste eerst</option>
+        <option value="merk-az">Merk A → Z</option>
+      </select>
+    </div>
+    <div class="cars-grid" id="aanbodGrid"></div>
+  </div>
+  <div class="garantie-banner">
+    <div class="garantie-icon">🛡️</div>
+    <div class="garantie-text"><h4>Autotrust garantie inbegrepen</h4><p>Elke auto wordt geleverd met Autotrust garantie via onze partner.</p></div>
+    <div class="garantie-link"><a href="https://www.autotrust.nl/algemene-garantie-uitleg" target="_blank">Uitleg garantie →</a></div>
+  </div>
+</div>
+
+<!-- DETAIL -->
+<div id="page-detail" class="page">
+  <div class="section">
+    <div class="detail-back" onclick="go('aanbod')">← Terug naar aanbod</div>
+    <div class="detail-grid" id="detailContent"></div>
+  </div>
+</div>
+
+<!-- OVER ONS -->
+<div id="page-over" class="page">
+  <div class="section">
+    <div class="section-title" style="margin-bottom:24px;">Over NXT Motion</div>
+    <div class="over-grid">
+      <div>
+        <p style="color:var(--muted);line-height:1.85;font-size:14px;margin-bottom:16px;">NXT Motion is een jong en gedreven autohandelsbedrijf gevestigd in Eindhoven. Wij geloven in eerlijke handel — geen verborgen kosten, geen verrassingen. Alleen kwaliteitsoccasions met persoonlijke begeleiding van begin tot eind.</p>
+        <p style="color:var(--muted);line-height:1.85;font-size:14px;margin-bottom:22px;">Elke auto die wij verkopen wordt geleverd met garantie via onze partner Autotrust, zodat jij met vertrouwen wegrijdt.</p>
+        <div class="team">
+          <div class="team-member"><div class="team-avatar">IM</div><div class="team-name">Imran</div><div class="team-role">Mede-eigenaar</div><div style="font-size:11px;color:var(--muted);margin-top:6px;">06 17 15 29 16</div></div>
+          <div class="team-member"><div class="team-avatar">BD</div><div class="team-name">Bilal de Jonge</div><div class="team-role">Mede-eigenaar</div><div style="font-size:11px;color:var(--muted);margin-top:6px;">06 17 55 25 35</div></div>
+        </div>
+      </div>
+      <div><div class="over-img"><div style="font-size:28px;opacity:.35;">📸</div><div style="font-size:12px;">Foto's volgen binnenkort</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT -->
+<div id="page-contact" class="page">
+  <div class="section">
+    <div class="section-title" style="margin-bottom:24px;">Contact</div>
+    <div class="contact-grid">
+      <div class="contact-info">
+        <h3>Kom langs of bel ons</h3>
+        <div class="citem"><div class="cicon">📍</div><div><div class="clabel">Adres</div><div class="cval">Mimosaplein 5, Eindhoven</div></div></div>
+        <div class="citem"><div class="cicon">📞</div><div><div class="clabel">Imran</div><div class="cval">06 17 15 29 16</div></div></div>
+        <div class="citem"><div class="cicon">📞</div><div><div class="clabel">Bilal</div><div class="cval">06 17 55 25 35</div></div></div>
+        <div class="citem"><div class="cicon">✉️</div><div><div class="clabel">E-mail</div><div class="cval">Contact@nxt-motion.nl</div></div></div>
+        <div class="citem"><div class="cicon">🕐</div><div><div class="clabel">Beschikbaarheid</div><div class="cval">7 dagen per week, altijd op afspraak</div></div></div>
+        <div class="wa-contact-btns">
+          <a class="wa-contact-btn" href="https://wa.me/31617152916" target="_blank"><svg width="15" height="15" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.533 5.858L.057 23.428a.5.5 0 00.609.61l5.692-1.49A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.882a9.87 9.87 0 01-5.031-1.377l-.36-.214-3.733.978.998-3.648-.235-.374A9.861 9.861 0 012.118 12C2.118 6.52 6.52 2.118 12 2.118S21.882 6.52 21.882 12 17.48 21.882 12 21.882z"/></svg>WhatsApp Imran</a>
+          <a class="wa-contact-btn" href="https://wa.me/31617552535" target="_blank"><svg width="15" height="15" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.533 5.858L.057 23.428a.5.5 0 00.609.61l5.692-1.49A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.882a9.87 9.87 0 01-5.031-1.377l-.36-.214-3.733.978.998-3.648-.235-.374A9.861 9.861 0 012.118 12C2.118 6.52 6.52 2.118 12 2.118S21.882 6.52 21.882 12 17.48 21.882 12 21.882z"/></svg>WhatsApp Bilal</a>
+        </div>
+      </div>
+      <div>
+        <div class="form-group"><label>Naam</label><input type="text" id="cName" placeholder="Jouw naam" autocomplete="name"></div>
+        <div class="form-group"><label>E-mail of telefoonnummer</label><input type="text" id="cEmail" placeholder="jouw@email.nl of 06..." autocomplete="email"></div>
+        <div class="form-group"><label>Onderwerp</label><select id="cSubject"><option>Interesse in een auto</option><option>Proefrit aanvragen</option><option>Mijn auto verkopen</option><option>Vraag over garantie</option><option>Algemene vraag</option></select></div>
+        <div class="form-group"><label>Bericht</label><textarea id="cMsg" placeholder="Stel je vraag of laat je nummer achter..."></textarea></div>
+        <button class="btn-primary" onclick="submitContact()" style="width:100%;">Verstuur bericht</button>
+        <div class="form-success" id="formSuccess">✓ Bericht ontvangen! We nemen zo snel mogelijk contact op.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div id="page-login" class="page">
+  <div class="login-wrap">
+    <h2>Beheer inloggen</h2>
+    <p>Alleen voor NXT Motion medewerkers.</p>
+    <div class="form-group"><label>Wachtwoord</label><input type="password" id="loginPw" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <button class="btn-primary" onclick="doLogin()" style="width:100%;">Inloggen</button>
+    <div class="login-err" id="loginErr">Onjuist wachtwoord.</div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="page-admin" class="page">
+  <div class="admin-wrap">
+    <div class="admin-top">
+      <h2>Auto's beheren</h2>
+      <div class="badge-admin">Admin</div>
+      <div style="margin-left:auto;"><button class="btn-ghost" onclick="go('home')" style="font-size:12px;padding:7px 15px;">← Terug</button></div>
+    </div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px;">Huidige auto's</div>
+    <div id="adminList"></div>
+    <div style="height:24px;"></div>
+    <div class="add-form">
+      <h3>Nieuwe auto toevoegen</h3>
+      <div class="add-grid">
+        <div class="form-group"><label>Merk</label><input type="text" id="aMake" placeholder="bijv. BMW" autocomplete="off"></div>
+        <div class="form-group"><label>Model</label><input type="text" id="aModel" placeholder="bijv. 3-Serie 320d" autocomplete="off"></div>
+        <div class="form-group"><label>Bouwjaar</label><input type="number" id="aYear" placeholder="2021" min="1990" max="2030" inputmode="numeric"></div>
+        <div class="form-group"><label>Kilometerstand (km)</label><input type="number" id="aKm" placeholder="45000" min="0" inputmode="numeric"></div>
+        <div class="form-group"><label>Brandstof</label><select id="aFuel"><option>Benzine</option><option>Diesel</option><option>Elektrisch</option><option>Hybride</option><option>LPG</option></select></div>
+        <div class="form-group"><label>Prijs (€)</label><input type="number" id="aPrice" placeholder="15000" min="0" inputmode="numeric"></div>
+        <div class="form-group full">
+          <label>Foto uploaden</label>
+          <div class="upload-area">
+            <input type="file" id="photoFile" accept="image/*" onchange="handleUpload()">
+            <div class="upload-area-text">📷 Klik of sleep een foto hierheen<br><span>JPG, PNG, WEBP — max 10MB</span></div>
+          </div>
+          <div class="upload-progress" id="uploadProgress"></div>
+          <div style="font-size:11px;color:var(--muted);margin-top:6px;">Of plak een directe URL:</div>
+          <input type="url" id="aImg" placeholder="https://i.imgur.com/..." oninput="previewImg()" autocomplete="off" style="margin-top:6px;">
+        </div>
+      </div>
+      <div class="img-preview" id="imgPreview">Geen foto — upload een bestand of voeg een URL toe</div>
+      <button class="btn-primary" onclick="addCar()" style="margin-top:14px;">Auto toevoegen</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="logo">NXT MOTION</div>
+  <p style="color:var(--muted2);font-size:12px;">Mimosaplein 5, Eindhoven · Contact@nxt-motion.nl</p>
+  <div class="footer-links">
+    <a href="https://www.autotrust.nl/algemene-garantie-uitleg" target="_blank">Garantie uitleg</a>
+    <a onclick="go('contact')">Contact</a>
+    <a onclick="go('login')" style="color:var(--muted2);font-size:11px;">⚙</a>
+  </div>
+</footer>
+</div>
+
+<script>
+const ADMIN_PW='nxtmotion2024';
+let cars=[],loggedIn=false,menuOpen=false,waOpen=false;
+
+// ── CORNER-ANCHORED DRAGGABLE WA ──
+(function(){
+  const el=document.getElementById('waFloat');
+  const btn=document.getElementById('waBtn');
+  const popup=document.getElementById('waPopup');
+  const MARGIN=16;
+  let dragging=false,moved=false;
+  let startCX,startCY,startEL,startET;
+  let cornerH='right',cornerV='bottom';
+
+  function btnSize(){return btn.offsetWidth||62;}
+
+  function setPopupDirection(){
+    popup.classList.toggle('above',cornerV==='bottom');
+    popup.classList.toggle('below',cornerV==='top');
+    popup.classList.toggle('align-right',cornerH==='right');
+    popup.classList.toggle('align-left',cornerH==='left');
+  }
+
+  function placeAtCorner(h,v,animate){
+    cornerH=h;cornerV=v;
+    const W=window.innerWidth,H=window.innerHeight,S=btnSize();
+    const tL=h==='left'?MARGIN:W-S-MARGIN;
+    const tT=v==='top'?MARGIN:H-S-MARGIN;
+    if(animate){
+      el.style.transition='left .3s cubic-bezier(.34,1.4,.64,1),top .3s cubic-bezier(.34,1.4,.64,1)';
+      setTimeout(()=>{el.style.transition='';},350);
+    }
+    el.style.left=tL+'px';el.style.top=tT+'px';
+    el.style.right='';el.style.bottom='';
+    setPopupDirection();
+  }
+
+  function snapFromCurrent(){
+    const W=window.innerWidth,H=window.innerHeight,S=btnSize();
+    const r=el.getBoundingClientRect();
+    const cx=r.left+S/2,cy=r.top+S/2;
+    placeAtCorner(cx<W/2?'left':'right',cy<H/2?'top':'bottom',true);
+  }
+
+  placeAtCorner('right','bottom',false);
+
+  function startDrag(cx,cy){
+    dragging=true;moved=false;startCX=cx;startCY=cy;
+    const r=el.getBoundingClientRect();startEL=r.left;startET=r.top;
+    el.style.transition='none';
+  }
+  function moveDrag(cx,cy){
+    if(!dragging)return;
+    const dx=cx-startCX,dy=cy-startCY;
+    if(Math.abs(dx)>3||Math.abs(dy)>3)moved=true;
+    const W=window.innerWidth,H=window.innerHeight,S=btnSize();
+    el.style.left=Math.max(MARGIN,Math.min(W-S-MARGIN,startEL+dx))+'px';
+    el.style.top=Math.max(MARGIN,Math.min(H-S-MARGIN,startET+dy))+'px';
+  }
+  function endDrag(){
+    if(!dragging)return;dragging=false;
+    if(moved){snapFromCurrent();}
+    else{waOpen=!waOpen;popup.classList.toggle('open',waOpen);setPopupDirection();}
+  }
+
+  btn.addEventListener('mousedown',e=>{e.preventDefault();startDrag(e.clientX,e.clientY);});
+  document.addEventListener('mousemove',e=>{moveDrag(e.clientX,e.clientY);});
+  document.addEventListener('mouseup',()=>{endDrag();});
+  btn.addEventListener('touchstart',e=>{const t=e.touches[0];startDrag(t.clientX,t.clientY);},{passive:true});
+  document.addEventListener('touchmove',e=>{if(dragging){const t=e.touches[0];moveDrag(t.clientX,t.clientY);}},{passive:true});
+  document.addEventListener('touchend',()=>{endDrag();},{passive:true});
+  document.addEventListener('click',e=>{
+    if(!e.target.closest('.wa-float')){waOpen=false;popup.classList.remove('open');}
+  });
+})();
+
+function toggleMenu(){menuOpen=!menuOpen;document.getElementById('mobileMenu').classList.toggle('open',menuOpen);}
+function closeMenu(){menuOpen=false;document.getElementById('mobileMenu').classList.remove('open');}
+document.addEventListener('click',e=>{if(!e.target.closest('nav')&&!e.target.closest('.mobile-menu'))closeMenu();});
+
+function go(p,carId){
+  if(p==='admin'&&!loggedIn){go('login');return;}
+  if(p==='detail'&&carId)renderDetail(carId);
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('active'));
+  const nl=document.getElementById('nl-'+p);if(nl)nl.classList.add('active');
+  window.scrollTo(0,0);
+}
+
+async function loadCars(){
+  try{const r=await window.storage.get('nxtmotion_cars_v2');if(r&&r.value)cars=JSON.parse(r.value);}catch(e){}
+  if(!cars||!cars.length)cars=defaultCars();
+  renderAll();
+}
+function defaultCars(){return[
+  {id:1,make:'Volkswagen',model:'Golf 1.5 TSI Comfortline',year:'2021',km:'38.000',fuel:'Benzine',price:22500,img:'',sold:false},
+  {id:2,make:'BMW',model:'3 Serie 320d Sport Line',year:'2019',km:'71.000',fuel:'Diesel',price:28900,img:'',sold:false},
+  {id:3,make:'Toyota',model:'Yaris Cross 1.5 Hybrid',year:'2022',km:'21.000',fuel:'Hybride',price:26750,img:'',sold:false},
+];}
+async function saveCars(){try{await window.storage.set('nxtmotion_cars_v2',JSON.stringify(cars));}catch(e){}}
+function svgPh(){return`<svg width="72" height="44" viewBox="0 0 72 44" fill="none" style="opacity:.2"><rect x="4" y="16" width="64" height="20" rx="5" fill="#888"/><rect x="12" y="8" width="40" height="14" rx="4" fill="#666"/><circle cx="18" cy="36" r="6" fill="#555"/><circle cx="54" cy="36" r="6" fill="#555"/></svg>`;}
+
+function carCardHTML(car){
+  const sold=car.sold;
+  const soldHTML=sold?'<div class="sold-badge">Verkocht</div><div class="sold-overlay"></div>':'';
+  const img=car.img
+    ?`<div class="car-img-wrap">${soldHTML}<img src="${car.img}" alt="${car.make}" onerror="this.parentElement.innerHTML='${svgPh()}'"><div class="car-overlay"><div class="car-overlay-text">Bekijk details</div></div></div>`
+    :`<div class="car-img-wrap">${soldHTML}${svgPh()}<div class="car-overlay"><div class="car-overlay-text">Bekijk details</div></div></div>`;
+  return`<div class="car-card" onclick="go('detail',${car.id})">
+    ${img}
+    <div class="car-body">
+      <div class="car-make">${car.make}</div>
+      <div class="car-model">${car.model}</div>
+      <div class="car-specs"><span class="spec">${car.year}</span><span class="spec">${car.km} km</span><span class="spec">${car.fuel}</span></div>
+      <div class="car-footer">
+        <div class="car-price${sold?' sold-price':''}">€ ${Number(car.price).toLocaleString('nl-NL')}</div>
+        <div class="car-detail-hint">${sold?'Niet beschikbaar':'Klik voor details →'}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderDetail(id){
+  const car=cars.find(c=>c.id===id);if(!car)return;
+  const imgBlock=car.img
+    ?`<div class="detail-img"><img src="${car.img}" alt="${car.make} ${car.model}" onerror="this.parentElement.innerHTML='${svgPh()}'"></div>`
+    :`<div class="detail-img">${svgPh()}</div>`;
+  const soldNote=car.sold?`<div style="background:#3a1a1a;border:1px solid #5a2a2a;color:#e07070;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:16px;">Deze auto is al verkocht.</div>`:'';
+  const ctaBlock=car.sold
+    ?`<button class="btn-primary" onclick="go('aanbod')" style="width:100%;">Bekijk ander aanbod</button>`
+    :`<a class="call-card" href="tel:+31617152916"><div class="call-card-left"><div class="call-avatar">IM</div><div><div class="call-name">Imran bellen</div><div class="call-num">06 17 15 29 16</div></div></div><div class="call-icon">📞</div></a>
+      <a class="call-card" href="tel:+31617552535"><div class="call-card-left"><div class="call-avatar">BD</div><div><div class="call-name">Bilal bellen</div><div class="call-num">06 17 55 25 35</div></div></div><div class="call-icon">📞</div></a>`;
+  document.getElementById('detailContent').innerHTML=`
+    ${imgBlock}
+    <div>
+      <div class="detail-badge">${car.make}</div>
+      <div class="detail-title">${car.model}</div>
+      <div class="detail-price">€ ${Number(car.price).toLocaleString('nl-NL')}</div>
+      ${soldNote}
+      <div class="detail-specs-grid">
+        <div class="detail-spec-item"><div class="detail-spec-label">Bouwjaar</div><div class="detail-spec-val">${car.year}</div></div>
+        <div class="detail-spec-item"><div class="detail-spec-label">Kilometerstand</div><div class="detail-spec-val">${car.km} km</div></div>
+        <div class="detail-spec-item"><div class="detail-spec-label">Brandstof</div><div class="detail-spec-val">${car.fuel}</div></div>
+        <div class="detail-spec-item"><div class="detail-spec-label">Garantie</div><div class="detail-spec-val"><a href="https://www.autotrust.nl/algemene-garantie-uitleg" target="_blank">✓ Autotrust</a></div></div>
+      </div>
+      <div class="detail-cta">${ctaBlock}</div>
+    </div>`;
+}
+
+function applyFilters(){
+  const merk=document.getElementById('filterMerk').value;
+  const brandstof=document.getElementById('filterBrandstof').value;
+  const sort=document.getElementById('filterSort').value;
+  let list=[...cars];
+  if(merk)list=list.filter(c=>c.make===merk);
+  if(brandstof)list=list.filter(c=>c.fuel===brandstof);
+  if(sort==='price-asc')list.sort((a,b)=>a.price-b.price);
+  else if(sort==='price-desc')list.sort((a,b)=>b.price-a.price);
+  else if(sort==='year-desc')list.sort((a,b)=>Number(b.year)-Number(a.year));
+  else if(sort==='year-asc')list.sort((a,b)=>Number(a.year)-Number(b.year));
+  else if(sort==='merk-az')list.sort((a,b)=>a.make.localeCompare(b.make));
+  renderGrid('aanbodGrid',list);
+}
+function updateMerkFilter(){
+  const sel=document.getElementById('filterMerk');
+  const cur=sel.value;
+  const merken=[...new Set(cars.map(c=>c.make))].sort();
+  sel.innerHTML='<option value="">Alle merken</option>'+merken.map(m=>`<option${m===cur?' selected':''}>${m}</option>`).join('');
+}
+function renderGrid(id,list){
+  const el=document.getElementById(id);
+  if(!list||!list.length){el.innerHTML='<div class="no-cars"><div style="font-size:26px;margin-bottom:8px;">🚗</div><div>Geen auto\'s gevonden.</div></div>';return;}
+  el.innerHTML=list.map(carCardHTML).join('');
+}
+function fuelOpts(sel){return['Benzine','Diesel','Elektrisch','Hybride','LPG'].map(f=>`<option${f===sel?' selected':''}>${f}</option>`).join('');}
+function renderAdminList(){
+  const el=document.getElementById('adminList');
+  if(!cars.length){el.innerHTML='<div style="color:var(--muted);font-size:13px;padding:10px 0;">Nog geen auto\'s toegevoegd.</div>';return;}
+  el.innerHTML=cars.map(c=>`
+    <div class="admin-list-item" id="ali-${c.id}">
+      <div class="admin-list-main">
+        <div class="admin-thumb">${c.img?`<img src="${c.img}" onerror="this.style.display='none'">`:svgPh()}</div>
+        <div class="admin-info">
+          <div class="admin-name">${c.make} ${c.model} (${c.year})${c.sold?' <span style="color:#c05050;font-size:10px;margin-left:6px;">VERKOCHT</span>':''}</div>
+          <div class="admin-sub">€ ${Number(c.price).toLocaleString('nl-NL')} · ${c.km} km · ${c.fuel}</div>
+        </div>
+        <div class="admin-actions">
+          <button class="edit-btn" onclick="toggleEdit(${c.id})">✏️ Bewerken</button>
+          <button class="sold-btn${c.sold?' active':''}" onclick="toggleSold(${c.id})">${c.sold?'↩ Beschikbaar':'🏷️ Verkocht'}</button>
+          <button class="del-btn" onclick="deleteCar(${c.id})">Verwijderen</button>
+        </div>
+      </div>
+      <div class="edit-panel" id="ep-${c.id}">
+        <div class="edit-grid">
+          <div class="form-group"><label>Merk</label><input type="text" id="em-${c.id}" value="${c.make}" autocomplete="off"></div>
+          <div class="form-group"><label>Model</label><input type="text" id="emo-${c.id}" value="${c.model}" autocomplete="off"></div>
+          <div class="form-group"><label>Bouwjaar</label><input type="number" id="ey-${c.id}" value="${c.year}" min="1990" max="2030" inputmode="numeric"></div>
+          <div class="form-group"><label>Kilometerstand</label><input type="number" id="ek-${c.id}" value="${c.km}" min="0" inputmode="numeric"></div>
+          <div class="form-group"><label>Brandstof</label><select id="ef-${c.id}">${fuelOpts(c.fuel)}</select></div>
+          <div class="form-group"><label>Prijs (€)</label><input type="number" id="ep2-${c.id}" value="${c.price}" min="0" inputmode="numeric"></div>
+          <div class="form-group full"><label>Foto URL</label><input type="url" id="ei-${c.id}" value="${c.img||''}" autocomplete="off"></div>
+        </div>
+        <div class="edit-actions">
+          <button class="save-btn" onclick="saveEdit(${c.id})">Opslaan</button>
+          <button class="cancel-btn" onclick="toggleEdit(${c.id})">Annuleren</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+function toggleEdit(id){document.getElementById('ep-'+id).classList.toggle('open');}
+function toggleSold(id){const idx=cars.findIndex(c=>c.id===id);if(idx<0)return;cars[idx].sold=!cars[idx].sold;saveCars();renderAll();}
+function saveEdit(id){
+  const idx=cars.findIndex(c=>c.id===id);if(idx<0)return;
+  cars[idx]={...cars[idx],
+    make:document.getElementById('em-'+id).value.trim()||cars[idx].make,
+    model:document.getElementById('emo-'+id).value.trim()||cars[idx].model,
+    year:document.getElementById('ey-'+id).value.trim()||cars[idx].year,
+    km:document.getElementById('ek-'+id).value.trim()||cars[idx].km,
+    fuel:document.getElementById('ef-'+id).value,
+    price:+document.getElementById('ep2-'+id).value||cars[idx].price,
+    img:document.getElementById('ei-'+id).value.trim(),
+  };
+  saveCars();renderAll();
+}
+function renderAll(){
+  renderGrid('homeGrid',cars.filter(c=>!c.sold).slice(0,3));
+  applyFilters();
+  document.getElementById('statCount').textContent=cars.filter(c=>!c.sold).length;
+  document.getElementById('aanbodCount').textContent=cars.length+' auto\'s';
+  updateMerkFilter();
+  renderAdminList();
+}
+function doLogin(){
+  if(document.getElementById('loginPw').value===ADMIN_PW){
+    loggedIn=true;document.getElementById('loginPw').value='';
+    document.getElementById('loginErr').style.display='none';go('admin');
+  } else document.getElementById('loginErr').style.display='block';
+}
+async function handleUpload(){
+  const file=document.getElementById('photoFile').files[0];if(!file)return;
+  const prog=document.getElementById('uploadProgress');
+  prog.style.display='block';prog.style.color='var(--muted)';prog.textContent='Foto uploaden...';
+  try{
+    const fd=new FormData();fd.append('image',file);
+    const res=await fetch('https://api.imgur.com/3/image',{method:'POST',headers:{Authorization:'Client-ID 546c25a59c58ad7'},body:fd});
+    const data=await res.json();
+    if(data.success){
+      document.getElementById('aImg').value=data.data.link;
+      prog.style.color='#6dcf6d';prog.textContent='✓ Foto geüpload!';previewImg();
+    } else throw new Error();
+  } catch(e){prog.style.color='#c05050';prog.textContent='Upload mislukt — plak een URL handmatig.';}
+}
+function addCar(){
+  const make=document.getElementById('aMake').value.trim();
+  const model=document.getElementById('aModel').value.trim();
+  const year=document.getElementById('aYear').value.trim();
+  const km=document.getElementById('aKm').value.trim();
+  const fuel=document.getElementById('aFuel').value;
+  const price=document.getElementById('aPrice').value;
+  const img=document.getElementById('aImg').value.trim();
+  if(!make||!model||!price){alert('Vul minimaal merk, model en prijs in.');return;}
+  cars.unshift({id:Date.now(),make,model,year:year||'—',km:km||'—',fuel,price:+price,img,sold:false});
+  saveCars();renderAll();
+  ['aMake','aModel','aYear','aKm','aPrice','aImg'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('imgPreview').innerHTML='Geen foto — upload een bestand of voeg een URL toe';
+  document.getElementById('uploadProgress').style.display='none';
+  document.getElementById('photoFile').value='';
+}
+function previewImg(){
+  const url=document.getElementById('aImg').value.trim();
+  const el=document.getElementById('imgPreview');
+  if(url)el.innerHTML=`<img src="${url}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='Ongeldige URL'">`;
+  else el.innerHTML='Geen foto — upload een bestand of voeg een URL toe';
+}
+function submitContact(){
+  const n=document.getElementById('cName').value.trim();
+  const e=document.getElementById('cEmail').value.trim();
+  const m=document.getElementById('cMsg').value.trim();
+  if(!n||!e||!m){alert('Vul alle velden in.');return;}
+  document.getElementById('formSuccess').style.display='block';
+  ['cName','cEmail','cMsg'].forEach(id=>document.getElementById(id).value='');
+  setTimeout(()=>document.getElementById('formSuccess').style.display='none',5000);
+}
+loadCars();
+</script>
