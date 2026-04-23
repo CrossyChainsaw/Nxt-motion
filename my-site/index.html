@@ -316,18 +316,24 @@ footer{border-top:1px solid var(--border);padding:32px 40px;display:flex;justify
 
 
 /* CARD SLIDER */
-.card-slider{width:100%;aspect-ratio:4/3;overflow:hidden;position:relative;display:flex;}
-.card-slide{min-width:100%;aspect-ratio:4/3;flex-shrink:0;overflow:hidden;}
+.card-slider{width:100%;overflow:hidden;position:relative;}
+.card-track{display:flex;transition:transform .3s ease;width:100%;}
+.card-slide{min-width:100%;flex-shrink:0;aspect-ratio:4/3;overflow:hidden;background:var(--bg3);position:relative;}
 .card-slide img{width:100%;height:100%;object-fit:cover;display:block;}
-.card-dots{display:flex;gap:5px;justify-content:center;padding:8px 0 4px;}
+.card-dots{display:flex;gap:5px;justify-content:center;padding:6px 0 4px;background:var(--bg2);}
 .card-dot{width:5px;height:5px;border-radius:50%;background:var(--border);cursor:pointer;transition:background .2s,width .2s;}
 .card-dot.active{background:var(--accent1);width:14px;border-radius:3px;}
+.card-slider-wrap{position:relative;border-radius:var(--radius) var(--radius) 0 0;overflow:hidden;}
+.card-slider-wrap .sold-badge{z-index:5;}
+.card-slider-wrap .sold-overlay{z-index:4;}
+.card-slider-wrap .car-img-gradient{border-radius:0;}
+.card-slider-wrap .car-overlay-badge{border-radius:var(--radius);}
 
-/* SWIPE SLIDER */
-.swipe-container{width:100%;overflow:hidden;border-radius:var(--radius);position:relative;}
-.swipe-track{display:flex;transition:transform .3s ease;will-change:transform;}
-.swipe-slide{min-width:100%;aspect-ratio:4/3;background:var(--bg3);overflow:hidden;flex-shrink:0;}
-.swipe-slide img{width:100%;height:100%;object-fit:cover;display:block;}
+/* SWIPE SLIDER — detail page */
+.swipe-container{width:100%;overflow:hidden;border-radius:var(--radius);border:1px solid var(--border);}
+.swipe-track{display:flex;transition:transform .35s cubic-bezier(.25,.46,.45,.94);}
+.swipe-slide{min-width:100%;flex-shrink:0;aspect-ratio:4/3;overflow:hidden;background:var(--bg3);}
+.swipe-slide img{width:100%;height:100%;object-fit:contain;display:block;background:var(--bg3);}
 .swipe-dots{display:flex;gap:6px;justify-content:center;margin-top:10px;}
 .swipe-dot{width:6px;height:6px;border-radius:50%;background:var(--border);transition:background .2s,width .2s;cursor:pointer;}
 .swipe-dot.active{background:var(--accent1);width:18px;border-radius:3px;}
@@ -698,7 +704,7 @@ function carCardHTML(car){
   } else {
     const slides=imgs.map(function(u){return '<div class="card-slide"><img src="'+u+'" alt="'+car.make+'" loading="lazy" onerror="this.style.opacity=\'.3\'"></div>';}).join('');
     const dots=imgs.map(function(_,i){return '<div class="card-dot'+(i===0?' active':'')+'" onclick="event.stopPropagation();cardSlide(\''+uid+'\','+i+')"></div>';}).join('');
-    imgBlock='<div class="car-img-wrap" style="display:block;height:auto;">'+soldHTML+'<div class="card-slider" id="'+uid+'" data-idx="0">'+slides+'<div class="car-img-gradient" style="bottom:24px;"></div><div class="car-overlay-badge" style="bottom:34px;">Bekijk details</div></div><div class="card-dots">'+dots+'</div></div>';
+    imgBlock='<div class="card-slider-wrap">'+soldHTML+'<div class="card-slider"><div class="card-track" id="'+uid+'" data-idx="0">'+slides+'</div><div class="car-img-gradient"></div><div class="car-overlay-badge">Bekijk details</div></div><div class="card-dots">'+dots+'</div></div>';
   }
   var priceClass=sold?' sold-price':'';
   var priceVal='\u20ac '+Number(car.price).toLocaleString('nl-NL');
@@ -945,32 +951,29 @@ let newCarImgs=[];
 
 // ── CARD SWIPE SLIDER ──
 function cardSlide(uid,i){
-  var el=document.getElementById(uid);
-  if(!el)return;
-  el.dataset.idx=i;
-  var slides=el.querySelectorAll('.card-slide');
-  slides.forEach(function(s,idx){s.style.transform='translateX('+(idx-i)*100+'%)';});
-  var wrap=el.closest('.car-img-wrap');
+  var track=document.getElementById(uid);
+  if(!track)return;
+  track.dataset.idx=i;
+  track.style.transform='translateX('+(-i*100)+'%)';
+  var wrap=track.closest('.card-slider-wrap');
   if(wrap){wrap.querySelectorAll('.card-dot').forEach(function(d,idx){d.classList.toggle('active',idx===i);});}
 }
 function initCardSliders(){
-  document.querySelectorAll('.card-slider').forEach(function(el){
-    var uid=el.id;
-    var slides=el.querySelectorAll('.card-slide');
+  document.querySelectorAll('.card-track').forEach(function(track){
+    var uid=track.id;
+    var slides=track.querySelectorAll('.card-slide');
     if(slides.length<2)return;
-    slides.forEach(function(s,i){
-      s.style.position='absolute';s.style.inset='0';s.style.width='100%';s.style.height='100%';
-      s.style.transform='translateX('+i*100+'%)';
-    });
+    var slider=track.closest('.card-slider');
+    if(!slider)return;
     var startX=0,startY=0,wasMoved=false;
-    el.addEventListener('touchstart',function(e){startX=e.touches[0].clientX;startY=e.touches[0].clientY;wasMoved=false;},{passive:true});
-    el.addEventListener('touchmove',function(){wasMoved=true;},{passive:true});
-    el.addEventListener('touchend',function(e){
+    slider.addEventListener('touchstart',function(e){startX=e.touches[0].clientX;startY=e.touches[0].clientY;wasMoved=false;},{passive:true});
+    slider.addEventListener('touchmove',function(){wasMoved=true;},{passive:true});
+    slider.addEventListener('touchend',function(e){
       var dx=e.changedTouches[0].clientX-startX;
       var dy=e.changedTouches[0].clientY-startY;
       if(!wasMoved||Math.abs(dy)>Math.abs(dx)||Math.abs(dx)<30)return;
       e.stopPropagation();
-      var cur=+(el.dataset.idx||0);
+      var cur=+(track.dataset.idx||0);
       var next=dx<0?Math.min(slides.length-1,cur+1):Math.max(0,cur-1);
       if(next!==cur)cardSlide(uid,next);
     },{passive:true});
@@ -991,9 +994,12 @@ function swipeTo(i){
 function initSwipe(){
   var cont=document.getElementById('swipeCont');
   if(!cont)return;
+  var track=document.getElementById('swipeTrack');
   var slides=cont.querySelectorAll('.swipe-slide');
   var total=slides.length;
-  if(total<2)return;
+  if(!track||total<2)return;
+  // Ensure track starts at 0
+  track.style.transform='translateX(0%)';
   var startX=0,startY=0,moved=false;
   cont.addEventListener('touchstart',function(e){startX=e.touches[0].clientX;startY=e.touches[0].clientY;moved=false;},{passive:true});
   cont.addEventListener('touchmove',function(){moved=true;},{passive:true});
