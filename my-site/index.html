@@ -662,15 +662,16 @@ let cars=[],loggedIn=false,waOpen=false;
     if(moved){snap();}
     else{waOpen=!waOpen;popup.classList.toggle('open',waOpen);setPopupDir();}
   }
-  var lastTouch=0;
   btn.addEventListener('mousedown',e=>{e.preventDefault();startDrag(e.clientX,e.clientY);});
   document.addEventListener('mousemove',e=>{moveDrag(e.clientX,e.clientY);});
   document.addEventListener('mouseup',()=>{endDrag();});
-  btn.addEventListener('touchstart',e=>{lastTouch=Date.now();const t=e.touches[0];startDrag(t.clientX,t.clientY);},{passive:true});
+  btn.addEventListener('touchstart',e=>{const t=e.touches[0];startDrag(t.clientX,t.clientY);},{passive:true});
   document.addEventListener('touchmove',e=>{if(dragging){const t=e.touches[0];moveDrag(t.clientX,t.clientY);}},{passive:true});
-  document.addEventListener('touchend',()=>{endDrag();},{passive:true});
+  document.addEventListener('touchend',e=>{endDrag();},{passive:true});
+  // Stop click from bubbling out of the button so outside-handler never fires on same tap
+  btn.addEventListener('click',e=>{e.stopPropagation();});
+  // Close when clicking/tapping truly outside the wa-float
   document.addEventListener('click',e=>{
-    if(Date.now()-lastTouch<350)return;
     if(!e.target.closest('.wa-float')){waOpen=false;popup.classList.remove('open');}
   });
   window.addEventListener('resize',()=>placeCorner(cornerH,cornerV,false));
