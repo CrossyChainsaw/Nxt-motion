@@ -662,16 +662,51 @@ let cars=[],loggedIn=false,waOpen=false;
     if(moved){snap();}
     else{waOpen=!waOpen;popup.classList.toggle('open',waOpen);setPopupDir();}
   }
-  btn.addEventListener('mousedown',e=>{e.preventDefault();startDrag(e.clientX,e.clientY);});
-  document.addEventListener('mousemove',e=>{moveDrag(e.clientX,e.clientY);});
-  document.addEventListener('mouseup',()=>{endDrag();});
-  btn.addEventListener('touchstart',e=>{const t=e.touches[0];startDrag(t.clientX,t.clientY);},{passive:true});
-  document.addEventListener('touchmove',e=>{if(dragging){const t=e.touches[0];moveDrag(t.clientX,t.clientY);}},{passive:true});
-  document.addEventListener('touchend',e=>{endDrag();},{passive:true});
-  // Stop click from bubbling out of the button so outside-handler never fires on same tap
-  btn.addEventListener('click',e=>{e.stopPropagation();});
-  // Close when clicking/tapping truly outside the wa-float
-  document.addEventListener('click',e=>{
+  var isTouchDevice=false;
+  // Detect touch vs mouse
+  btn.addEventListener('touchstart',function(e){
+    isTouchDevice=true;
+    const t=e.touches[0];
+    startDrag(t.clientX,t.clientY);
+  },{passive:true});
+  document.addEventListener('touchmove',function(e){
+    if(dragging){const t=e.touches[0];moveDrag(t.clientX,t.clientY);}
+  },{passive:true});
+  document.addEventListener('touchend',function(e){
+    endDrag();
+    // Close popup when touching outside wa-float
+    if(!e.target.closest('.wa-float')&&!dragging){
+      waOpen=false;popup.classList.remove('open');
+    }
+  },{passive:true});
+  // Block the ghost click iOS fires after touchend
+  btn.addEventListener('click',function(e){
+    e.stopPropagation();
+    e.preventDefault();
+    // On desktop (non-touch) handle toggle via click
+    if(!isTouchDevice){
+      waOpen=!waOpen;
+      popup.classList.toggle('open',waOpen);
+      setPopupDir();
+    }
+  });
+  // Mouse-only drag (desktop)
+  btn.addEventListener('mousedown',function(e){
+    if(isTouchDevice)return;
+    e.preventDefault();
+    startDrag(e.clientX,e.clientY);
+  });
+  document.addEventListener('mousemove',function(e){
+    if(isTouchDevice)return;
+    moveDrag(e.clientX,e.clientY);
+  });
+  document.addEventListener('mouseup',function(){
+    if(isTouchDevice)return;
+    endDrag();
+  });
+  // Close on outside click (desktop only)
+  document.addEventListener('click',function(e){
+    if(isTouchDevice)return;
     if(!e.target.closest('.wa-float')){waOpen=false;popup.classList.remove('open');}
   });
   window.addEventListener('resize',()=>placeCorner(cornerH,cornerV,false));
