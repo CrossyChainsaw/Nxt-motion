@@ -483,7 +483,7 @@ footer{border-top:1px solid var(--border);padding:32px 40px;display:flex;justify
           </div>
           <div class="team-member">
             <div class="team-avatar">BD</div>
-            <div class="team-name">Bilal de Jonge</div>
+            <div class="team-name">Bilal</div>
             <div class="team-role">Mede-eigenaar</div>
             <div style="font-size:12px;color:var(--muted);margin-top:8px;">06 17 55 25 35</div>
           </div>
@@ -672,7 +672,7 @@ let cars=[],loggedIn=false,waOpen=false;
   window.addEventListener('resize',()=>placeCorner(cornerH,cornerV,false));
 })();
 
-function openMenu(){document.getElementById('mobileMenu').classList.add('open');document.body.style.overflow='hidden';}
+function openMenu(){var m=document.getElementById('mobileMenu');if(m.classList.contains('open')){closeMenu();}else{m.classList.add('open');document.body.style.overflow='hidden';}}
 function closeMenu(){document.getElementById('mobileMenu').classList.remove('open');document.body.style.overflow='';}
 
 function go(p,carId){
