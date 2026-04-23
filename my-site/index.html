@@ -340,6 +340,18 @@ footer{border-top:1px solid var(--border);padding:32px 40px;display:flex;justify
 .card-dots{display:flex;gap:5px;justify-content:center;padding:6px 0;background:var(--bg2);}
 .card-dot{width:5px;height:5px;border-radius:50%;background:var(--muted2);cursor:pointer;transition:background .2s,width .2s;}
 .card-dot.active{background:var(--accent1);width:14px;border-radius:3px;}
+
+/* LIGHTBOX */
+#lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:9999;align-items:center;justify-content:center;}
+#lightbox.open{display:flex;}
+#lightbox-img{max-width:100%;max-height:100vh;object-fit:contain;user-select:none;-webkit-user-drag:none;display:block;}
+#lightbox-close{position:absolute;top:16px;right:18px;background:rgba(255,255,255,0.12);border:none;color:#fff;font-size:26px;width:44px;height:44px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;z-index:2;}
+#lightbox-prev,#lightbox-next{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.12);border:none;color:#fff;font-size:24px;width:44px;height:44px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;}
+#lightbox-prev{left:12px;}
+#lightbox-next{right:12px;}
+#lightbox-prev:active,#lightbox-next:active,#lightbox-close:active{background:rgba(255,255,255,0.25);}
+.lb-hint{font-size:11px;color:var(--muted);text-align:right;}
+#lightbox-counter{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,0.6);font-size:13px;font-family:'DM Sans',sans-serif;}
 </style>
 </head>
 <body>
@@ -692,20 +704,16 @@ function carCardHTML(car){
   const sold=car.sold;
   const soldHTML=sold?'<div class="sold-badge">Verkocht</div><div class="sold-overlay"></div>':'';
   const imgs=Array.isArray(car.imgs)&&car.imgs.length?car.imgs:(car.img?[car.img]:[]);
-  const uid='cs_'+car.id;
+  const firstImg=imgs[0]||'';
   let imgBlock;
-  if(!imgs.length){
-    imgBlock='<div class="car-img-wrap">'+soldHTML+svgPh()+'</div>';
-  } else if(imgs.length===1){
-    imgBlock='<div class="car-img-wrap">'+soldHTML+'<img src="'+imgs[0]+'" alt="'+car.make+'" loading="lazy" onerror="this.style.opacity=\'.3\'"><div class="car-img-gradient"></div><div class="car-overlay-badge">Bekijk details</div></div>';
+  if(firstImg){
+    imgBlock='<div class="car-img-wrap">'+soldHTML+'<img src="'+firstImg+'" alt="'+car.make+'" loading="lazy" onerror="this.style.opacity=\'.3\'"><div class="car-img-gradient"></div><div class="car-overlay-badge">Bekijk details</div></div>';
   } else {
-    const slides=imgs.map(function(u){return '<div class="card-slide"><img src="'+u+'" alt="'+car.make+'" loading="lazy" onerror="this.style.opacity=\'.3\'"></div>';}).join('');
-    const dots=imgs.map(function(_,i){return '<div class="card-dot'+(i===0?' active':'')+'" onclick="event.stopPropagation();cardSlide(\''+uid+'\','+i+')"></div>';}).join('');
-    imgBlock='<div class="card-slider-wrap">'+soldHTML+'<div class="card-slider"><div class="card-track" id="'+uid+'" data-idx="0">'+slides+'</div><div class="car-img-gradient"></div><div class="car-overlay-badge">Bekijk details</div></div><div class="card-dots">'+dots+'</div></div>';
+    imgBlock='<div class="car-img-wrap">'+soldHTML+svgPh()+'</div>';
   }
-  var priceClass=sold?' sold-price':'';
-  var priceVal='\u20ac '+Number(car.price).toLocaleString('nl-NL');
-  var hint=sold?'Niet beschikbaar':'Klik voor details \u2192';
+  const priceClass=sold?' sold-price':'';
+  const priceVal='\u20ac '+Number(car.price).toLocaleString('nl-NL');
+  const hint=sold?'Niet beschikbaar':'Klik voor details \u2192';
   return '<div class="car-card" onclick="go(\'detail\','+car.id+')">'
     +imgBlock
     +'<div class="car-body">'
@@ -726,11 +734,20 @@ function renderDetail(id){
   if(!imgs.length){
     imgBlock=`<div class="detail-img">${svgPh()}</div>`;
   } else if(imgs.length===1){
-    imgBlock=`<div class="swipe-container"><div class="swipe-track"><div class="swipe-slide"><img src="${imgs[0]}" alt="${car.make}" loading="lazy" onerror="this.style.display='none'"></div></div></div>`;
+    imgBlock=`<div class="swipe-container" onclick="openLightbox(window._detailImgs,0)" style="cursor:zoom-in;">
+      <div class="swipe-track"><div class="swipe-slide"><img src="${imgs[0]}" alt="${car.make}" loading="lazy" onerror="this.style.display='none'"></div></div>
+      <div class="lb-hint">🔍 Tik om te vergroten</div>
+    </div>`;
   } else {
     const slides=imgs.map((u,i)=>`<div class="swipe-slide"><img src="${u}" alt="${car.make}" loading="lazy" onerror="this.style.display='none'"></div>`).join('');
-    const dots=imgs.map((_,i)=>`<div class="swipe-dot${i===0?' active':''}" onclick="swipeTo(${i})"></div>`).join('');
-    imgBlock=`<div class="swipe-container" id="swipeCont"><div class="swipe-track" id="swipeTrack">${slides}</div></div><div class="swipe-dots" id="swipeDots">${dots}</div>`;
+    const dots=imgs.map((_,i)=>`<div class="swipe-dot${i===0?' active':''}" onclick="event.stopPropagation();swipeTo(${i})"></div>`).join('');
+    imgBlock=`<div class="swipe-container" id="swipeCont" onclick="openLightbox(window._detailImgs,_swipeIdx)" style="cursor:zoom-in;">
+      <div class="swipe-track" id="swipeTrack">${slides}</div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;">
+      <div id="swipeDots" style="display:flex;gap:6px;">${dots}</div>
+      <div class="lb-hint">🔍 Tik om te vergroten</div>
+    </div>`;
   }
   const soldNote=car.sold?`<div style="background:#3a1a1a;border:1px solid #5a2a2a;color:#e07070;padding:12px 16px;border-radius:8px;font-size:14px;margin-bottom:18px;">Deze auto is al verkocht. Bekijk ons andere aanbod of neem contact op.</div>`:'';
   const ctaBlock=car.sold
@@ -791,17 +808,17 @@ function renderAdminList(){
     const imgs = Array.isArray(c.imgs) ? c.imgs : (c.img ? [c.img] : []);
     const thumbFirst = imgs[0] || '';
     const photoList = imgs.map((url,idx)=>`
-      <div class="photo-item" data-idx="${idx}">
-        <div style="display:flex;flex-direction:column;gap:3px;flex-shrink:0;">
-          <button onclick="moveEditPhoto(${c.id},${idx},-1)" style="background:none;border:1px solid var(--border);color:var(--muted);cursor:pointer;width:26px;height:24px;border-radius:4px;font-size:13px;line-height:1;${idx===0?'opacity:.3;pointer-events:none;':''}">▲</button>
-          <button onclick="moveEditPhoto(${c.id},${idx},1)" style="background:none;border:1px solid var(--border);color:var(--muted);cursor:pointer;width:26px;height:24px;border-radius:4px;font-size:13px;line-height:1;${idx===imgs.length-1?'opacity:.3;pointer-events:none;':''}">▼</button>
+      <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);">
+        <div style="display:flex;flex-direction:column;gap:2px;flex-shrink:0;">
+          <button onclick="moveEditPhoto(${c.id},${idx},-1)" style="background:none;border:1px solid var(--border);color:var(--muted);cursor:pointer;width:22px;height:20px;border-radius:3px;font-size:11px;line-height:1;${idx===0?'opacity:.25;pointer-events:none;':''}">▲</button>
+          <button onclick="moveEditPhoto(${c.id},${idx},1)" style="background:none;border:1px solid var(--border);color:var(--muted);cursor:pointer;width:22px;height:20px;border-radius:3px;font-size:11px;line-height:1;${idx===imgs.length-1?'opacity:.25;pointer-events:none;':''}">▼</button>
         </div>
-        <img src="${url}" style="width:52px;height:38px;object-fit:cover;border-radius:4px;flex-shrink:0;" onerror="this.style.opacity='.3'">
-        <div style="flex:1;overflow:hidden;">
-          ${idx===0?'<div style="color:var(--accent2);font-size:10px;margin-bottom:2px;">✦ Hoofdfoto</div>':''}
-          <div style="font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${url}</div>
+        <img src="${url}" style="width:56px;height:42px;object-fit:cover;border-radius:5px;flex-shrink:0;border:1px solid var(--border);" onerror="this.style.opacity='.2'">
+        <div style="flex:1;min-width:0;">
+          ${idx===0?'<div style="color:var(--accent2);font-size:10px;font-weight:500;margin-bottom:1px;">✦ Hoofdfoto</div>':''}
+          <div style="font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${url.split('/').pop()}</div>
         </div>
-        <button onclick="removeEditPhoto(${c.id},${idx})" style="background:none;border:none;color:#c05050;cursor:pointer;font-size:20px;line-height:1;padding:2px 6px;flex-shrink:0;">✕</button>
+        <button onclick="removeEditPhoto(${c.id},${idx})" style="background:none;border:none;color:#c05050;cursor:pointer;font-size:17px;line-height:1;padding:4px;flex-shrink:0;">✕</button>
       </div>`).join('');
     return`
     <div class="admin-list-item" id="ali-${c.id}">
@@ -1052,17 +1069,17 @@ function renderNewCarPhotos(){
     return;
   }
   el.innerHTML=newCarImgs.map((url,idx)=>`
-    <div class="photo-item" data-idx="${idx}">
-      <div style="display:flex;flex-direction:column;gap:3px;flex-shrink:0;">
-        <button onclick="movePhoto(newCarImgs,${idx},-1,renderNewCarPhotos)" style="background:none;border:1px solid var(--border);color:var(--muted);cursor:pointer;width:26px;height:24px;border-radius:4px;font-size:13px;line-height:1;${idx===0?'opacity:.3;pointer-events:none;':''}">▲</button>
-        <button onclick="movePhoto(newCarImgs,${idx},1,renderNewCarPhotos)" style="background:none;border:1px solid var(--border);color:var(--muted);cursor:pointer;width:26px;height:24px;border-radius:4px;font-size:13px;line-height:1;${idx===newCarImgs.length-1?'opacity:.3;pointer-events:none;':''}">▼</button>
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);">
+      <div style="display:flex;flex-direction:column;gap:2px;flex-shrink:0;">
+        <button onclick="movePhoto(newCarImgs,${idx},-1,renderNewCarPhotos)" style="background:none;border:1px solid var(--border);color:var(--muted);cursor:pointer;width:22px;height:20px;border-radius:3px;font-size:11px;line-height:1;${idx===0?'opacity:.25;pointer-events:none;':''}">▲</button>
+        <button onclick="movePhoto(newCarImgs,${idx},1,renderNewCarPhotos)" style="background:none;border:1px solid var(--border);color:var(--muted);cursor:pointer;width:22px;height:20px;border-radius:3px;font-size:11px;line-height:1;${idx===newCarImgs.length-1?'opacity:.25;pointer-events:none;':''}">▼</button>
       </div>
-      <img src="${url}" style="width:52px;height:38px;object-fit:cover;border-radius:4px;flex-shrink:0;" onerror="this.style.opacity='.3'">
-      <div style="flex:1;overflow:hidden;">
-        ${idx===0?'<div style="color:var(--accent2);font-size:10px;margin-bottom:2px;">✦ Hoofdfoto</div>':''}
-        <div style="font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${url}</div>
+      <img src="${url}" style="width:56px;height:42px;object-fit:cover;border-radius:5px;flex-shrink:0;border:1px solid var(--border);" onerror="this.style.opacity='.2'">
+      <div style="flex:1;min-width:0;">
+        ${idx===0?'<div style="color:var(--accent2);font-size:10px;font-weight:500;margin-bottom:1px;">✦ Hoofdfoto</div>':''}
+        <div style="font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${url.split('/').pop()}</div>
       </div>
-      <button onclick="removeNewCarPhoto(${idx})" style="background:none;border:none;color:#c05050;cursor:pointer;font-size:20px;line-height:1;padding:2px 6px;flex-shrink:0;">✕</button>
+      <button onclick="removeNewCarPhoto(${idx})" style="background:none;border:none;color:#c05050;cursor:pointer;font-size:17px;line-height:1;padding:4px;flex-shrink:0;">✕</button>
     </div>`).join('');
   makeDraggable(el,newCarImgs,renderNewCarPhotos);
   document.getElementById('imgPreview').innerHTML=`<img src="${newCarImgs[0]}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='Ongeldige URL'">`;
@@ -1148,6 +1165,60 @@ function submitContact(){
   setTimeout(()=>document.getElementById('formSuccess').style.display='none',5000);
 }
 loadCars();
+
+// ── LIGHTBOX ──
+var _lbImgs=[];
+var _lbIdx=0;
+function openLightbox(imgs,idx){
+  _lbImgs=imgs;_lbIdx=idx||0;
+  lbRender();
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeLightbox(){
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow='';
+}
+function lbRender(){
+  document.getElementById('lightbox-img').src=_lbImgs[_lbIdx]||'';
+  var c=document.getElementById('lightbox-counter');
+  c.textContent=_lbImgs.length>1?(_lbIdx+1)+' / '+_lbImgs.length:'';
+  document.getElementById('lightbox-prev').style.display=_lbImgs.length>1?'flex':'none';
+  document.getElementById('lightbox-next').style.display=_lbImgs.length>1?'flex':'none';
+}
+function lbNav(dir){
+  _lbIdx=(_lbIdx+dir+_lbImgs.length)%_lbImgs.length;
+  lbRender();
+}
+function lbClickOutside(e){
+  if(e.target===document.getElementById('lightbox'))closeLightbox();
+}
+document.addEventListener('DOMContentLoaded',function(){
+  var lb=document.getElementById('lightbox');
+  if(!lb)return;
+  var sx=0,sy=0;
+  lb.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});
+  lb.addEventListener('touchend',function(e){
+    var dx=e.changedTouches[0].clientX-sx;
+    var dy=e.changedTouches[0].clientY-sy;
+    if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>40)lbNav(dx<0?1:-1);
+  },{passive:true});
+  document.addEventListener('keydown',function(e){
+    if(!lb.classList.contains('open'))return;
+    if(e.key==='ArrowLeft')lbNav(-1);
+    if(e.key==='ArrowRight')lbNav(1);
+    if(e.key==='Escape')closeLightbox();
+  });
+});
 </script>
+
+<!-- LIGHTBOX -->
+<div id="lightbox" onclick="lbClickOutside(event)">
+  <button id="lightbox-close" onclick="closeLightbox()">✕</button>
+  <button id="lightbox-prev" onclick="lbNav(-1)">‹</button>
+  <img id="lightbox-img" src="" alt="">
+  <button id="lightbox-next" onclick="lbNav(1)">›</button>
+  <div id="lightbox-counter"></div>
+</div>
 </body>
 </html>
