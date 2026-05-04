@@ -352,6 +352,7 @@ footer{border-top:1px solid var(--border);padding:32px 40px;display:flex;justify
 #lightbox-prev:active,#lightbox-next:active,#lightbox-close:active{background:rgba(255,255,255,0.25);}
 .lb-hint{font-size:11px;color:var(--muted);text-align:right;}
 #lightbox-counter{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,0.6);font-size:13px;font-family:'DM Sans',sans-serif;}
+@keyframes loadpulse{0%{opacity:1}50%{opacity:.4}100%{opacity:1}}
 </style>
 </head>
 <body>
@@ -369,6 +370,8 @@ footer{border-top:1px solid var(--border);padding:32px 40px;display:flex;justify
     <span></span><span></span><span></span>
   </button>
 </nav>
+<div id="dbError" style="display:none;position:fixed;top:0;left:0;right:0;background:#c0392b;color:#fff;padding:10px 20px;font-size:13px;z-index:9999;text-align:center;"></div>
+<div id="loadingBar" style="display:none;position:fixed;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent1),var(--accent2));z-index:9998;animation:loadpulse 1s infinite;"></div>
 
 <div class="mobile-menu" id="mobileMenu">
   <button class="mobile-close" onclick="closeMenu()">✕</button>
@@ -577,7 +580,11 @@ footer{border-top:1px solid var(--border);padding:32px 40px;display:flex;justify
         </div>
         <div class="form-group"><label>Prijs (€)</label><input type="number" id="aPrice" placeholder="15000" min="0" inputmode="numeric"></div>
         <div class="form-group full">
-          <label>Foto's — <span id="newCarPhotoCount">0</span>/10 toegevoegd</label>
+          <label>Beschrijving (optioneel)</label>
+          <textarea id="aDesc" placeholder="Beschrijf de auto, opties, onderhoud, bijzonderheden..." style="width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:10px 13px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;resize:vertical;min-height:80px;transition:border-color .2s;"></textarea>
+        </div>
+        <div class="form-group full">
+          <label>Foto's — <span id="newCarPhotoCount">0</span>/30 toegevoegd</label>
           <div id="newCarPhotoList" style="margin-bottom:8px;"><div style="color:var(--muted);font-size:12px;padding:4px 0;">Nog geen foto's toegevoegd</div></div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
             <div class="upload-area" style="flex:1;min-width:160px;padding:14px;">
@@ -717,26 +724,139 @@ function closeMenu(){document.getElementById('mobileMenu').classList.remove('ope
 
 function go(p,carId){
   if(p==='admin'&&!loggedIn){go('login');return;}
+  // Update hash for routing
+  if(p==='detail'&&carId){
+    window.location.hash='auto/'+carId;
+  } else if(p==='home'){
+    window.location.hash='';
+  } else {
+    window.location.hash=p;
+  }
+  showPage(p,carId);
+}
+
+function showPage(p,carId){
+  if(p==='admin'&&!loggedIn){showPage('login');return;}
   if(p==='detail'&&carId)renderDetail(carId);
   document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
-  document.getElementById('page-'+p).classList.add('active');
+  const pageEl=document.getElementById('page-'+p);
+  if(pageEl)pageEl.classList.add('active');
   document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('active'));
   const nl=document.getElementById('nl-'+p);if(nl)nl.classList.add('active');
   window.scrollTo(0,0);
 }
 
-const STORAGE_KEY='nxtmotion_cars_v2';
-function loadCars(){
-  try{const d=localStorage.getItem(STORAGE_KEY);if(d)cars=JSON.parse(d);}catch(e){}
-  if(!cars||!cars.length)cars=defaultCars();
+function handleHash(){
+  const hash=window.location.hash.replace('#','');
+  if(!hash||hash==='/'||hash==='home'){
+    showPage('home');
+  } else if(hash==='aanbod'){
+    showPage('aanbod');
+  } else if(hash==='contact'){
+    showPage('contact');
+  } else if(hash==='over'){
+    showPage('over');
+  } else if(hash==='login'){
+    showPage('login');
+  } else if(hash==='admin'){
+    showPage('admin');
+  } else if(hash.startsWith('auto/')){
+    const id=+hash.split('/')[1];
+    if(id){showPage('detail',id);}
+  } else {
+    showPage('home');
+  }
+}
+
+window.addEventListener('hashchange',handleHash);
+
+const SUPABASE_URL='https://vippveshpwgdlpnxxysj.supabase.co';
+const SUPABASE_KEY='sb_publishable_qhhuPNJhkSc8En-X_0laAA_Bd4C7lo1';
+
+async function sbFetch(path,method,body){
+  const opts={
+    method:method||'GET',
+    headers:{
+      'apikey':SUPABASE_KEY,
+      'Content-Type':'application/json',
+      'Prefer':'return=representation'
+    }
+  };
+  if(body)opts.body=JSON.stringify(body);
+  try{
+    const res=await fetch(SUPABASE_URL+'/rest/v1/'+path,opts);
+    const text=await res.text();
+    if(!res.ok){
+      console.error('Supabase error',res.status,text);
+      showDbError('Database fout: '+res.status+' — '+text);
+      return null;
+    }
+    return text?JSON.parse(text):null;
+  }catch(err){
+    console.error('Fetch failed:',err);
+    showDbError('Verbinding mislukt. Controleer je internetverbinding.');
+    return null;
+  }
+}
+
+function showDbError(msg){
+  let el=document.getElementById('dbError');
+  if(!el)return;
+  el.textContent=msg;
+  el.style.display='block';
+  setTimeout(()=>{el.style.display='none';},6000);
+}
+
+async function loadCars(){
+  showLoading(true);
+  try{
+    const data=await sbFetch('cars?select=*&order=created_at.desc');
+    if(data&&data.length){
+      cars=data.map(c=>({...c,imgs:c.imgs||[],img:c.img||'',desc:c.description||''}));
+    } else {
+      cars=[];
+    }
+  }catch(e){console.error(e);cars=[];}
+  showLoading(false);
+  renderAll();
+  // Handle initial hash after data loads
+  handleHash();
+}
+
+async function saveCar(car){
+  // Map to DB columns
+  const row={make:car.make,model:car.model,year:car.year,km:car.km,fuel:car.fuel,price:car.price,description:car.desc||'',imgs:car.imgs||[],img:car.imgs&&car.imgs[0]||'',sold:car.sold||false};
+  if(car.id&&typeof car.id==='number'&&car.id>1000000000){
+    // Local temp id, insert new
+    const res=await sbFetch('cars','POST',row);
+    return res&&res[0]?res[0].id:null;
+  } else {
+    // Update existing
+    await sbFetch('cars?id=eq.'+car.id,'PATCH',row);
+    return car.id;
+  }
+}
+
+async function deleteCar(id){
+  if(!confirm('Weet je zeker dat je deze auto wilt verwijderen?'))return;
+  await sbFetch('cars?id=eq.'+id,'DELETE');
+  cars=cars.filter(c=>c.id!==id);
   renderAll();
 }
-function saveCars(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(cars));}catch(e){}}
-function defaultCars(){return[
-  {id:1,make:'Volkswagen',model:'Golf 1.5 TSI Comfortline',year:'2021',km:'38.000',fuel:'Benzine',price:22500,img:'',sold:false},
-  {id:2,make:'BMW',model:'3 Serie 320d Sport Line',year:'2019',km:'71.000',fuel:'Diesel',price:28900,img:'',sold:false},
-  {id:3,make:'Toyota',model:'Yaris Cross 1.5 Hybrid',year:'2022',km:'21.000',fuel:'Hybride',price:26750,img:'',sold:false},
-];}
+
+async function toggleSold(id){
+  const i=cars.findIndex(c=>c.id===id);if(i<0)return;
+  cars[i].sold=!cars[i].sold;
+  await sbFetch('cars?id=eq.'+id,'PATCH',{sold:cars[i].sold});
+  renderAll();
+}
+
+function showLoading(on){
+  let el=document.getElementById('loadingBar');
+  if(!el)return;
+  el.style.display=on?'block':'none';
+}
+function defaultCars(){return[];}
 
 function svgPh(){return`<svg width="80" height="50" viewBox="0 0 72 44" fill="none" style="opacity:.2"><rect x="4" y="16" width="64" height="20" rx="5" fill="#888"/><rect x="12" y="8" width="40" height="14" rx="4" fill="#666"/><circle cx="18" cy="36" r="6" fill="#555"/><circle cx="54" cy="36" r="6" fill="#555"/></svg>`;}
 
@@ -808,6 +928,7 @@ function renderDetail(id){
         <div class="detail-spec-item"><div class="detail-spec-label">Brandstof</div><div class="detail-spec-val">${car.fuel}</div></div>
         <div class="detail-spec-item"><div class="detail-spec-label">Garantie</div><div class="detail-spec-val"><a href="https://www.autotrust.nl/algemene-garantie-uitleg" target="_blank" style="display:flex;flex-direction:column;gap:2px;">✓ Autotrust<span style="font-size:10px;color:var(--accent2);font-weight:400;">klik voor meer info</span></a></div></div>
       </div>
+      ${car.desc?`<div style="color:var(--muted);font-size:14px;line-height:1.75;padding:16px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-bottom:16px;white-space:pre-wrap;">${car.desc}</div>`:''}
       <div class="detail-cta">${ctaBlock}</div>
     </div>`;
   setTimeout(initSwipe,50);
@@ -911,42 +1032,38 @@ function toggleEdit(id){
   const ep=document.getElementById('ep-'+id);
   ep.classList.toggle('open');
 }
-function toggleSold(id){const i=cars.findIndex(c=>c.id===id);if(i<0)return;cars[i].sold=!cars[i].sold;saveCars();renderAll();}
+function toggleSold(id){const i=cars.findIndex(c=>c.id===id);if(i<0)return;cars[i].sold=!cars[i].sold;renderAll();}
 
 function deleteCar(id){
   if(!confirm('Weet je zeker dat je deze auto wilt verwijderen?'))return;
   cars=cars.filter(c=>c.id!==id);
-  saveCars();
   renderAll();
 }
 
 function getImgs(car){return Array.isArray(car.imgs)?car.imgs:(car.img?[car.img]:[]);}
 
-function removeEditPhoto(carId,idx){
+async function removeEditPhoto(carId,idx){
   const i=cars.findIndex(c=>c.id===carId);if(i<0)return;
   const imgs=getImgs(cars[i]);
   imgs.splice(idx,1);
-  cars[i].imgs=imgs;
-  cars[i].img=imgs[0]||'';
-  saveCars();
+  cars[i].imgs=imgs;cars[i].img=imgs[0]||'';
+  await sbFetch('cars?id=eq.'+carId,'PATCH',{imgs:imgs,img:imgs[0]||''});
   renderAdminList();
-  // re-open edit panel
   const ep=document.getElementById('ep-'+carId);
   if(ep)ep.classList.add('open');
 }
 
-function addEditPhotoUrl(carId){
+async function addEditPhotoUrl(carId){
   const input=document.getElementById('editImgUrl-'+carId);
   const url=input.value.trim();
   if(!url)return;
   const i=cars.findIndex(c=>c.id===carId);if(i<0)return;
   const imgs=getImgs(cars[i]);
-  if(imgs.length>=10){alert('Maximaal 10 foto\'s per auto.');return;}
+  if(imgs.length>=30){alert('Maximaal 30 foto\'s per auto.');return;}
   imgs.push(url);
-  cars[i].imgs=imgs;
-  cars[i].img=imgs[0];
+  cars[i].imgs=imgs;cars[i].img=imgs[0];
   input.value='';
-  saveCars();
+  await sbFetch('cars?id=eq.'+carId,'PATCH',{imgs:imgs,img:imgs[0]||''});
   renderAdminList();
   const ep=document.getElementById('ep-'+carId);
   if(ep)ep.classList.add('open');
@@ -960,12 +1077,12 @@ async function uploadEditPhoto(carId,fileInput){
   let done=0;
   for(const file of files){
     const imgs=getImgs(cars[i]);
-    if(imgs.length>=10){prog.style.color='#c05050';prog.textContent='Max 10 foto\'s bereikt.';break;}
+    if(imgs.length>=30){prog.style.color='#c05050';prog.textContent='Max 30 foto\'s bereikt.';break;}
     try{
       prog.textContent=`Uploaden ${done+1}/${files.length}...`;
       const url=await uploadToImgur(file);
       imgs.push(url);cars[i].imgs=imgs;cars[i].img=imgs[0];
-      saveCars();done++;
+      done++;
     }catch(e){prog.style.color='#c05050';prog.textContent=`Foto ${done+1} mislukt.`;break;}
   }
   if(done>0){prog.style.color='#6dcf6d';prog.textContent=`✓ ${done} foto${done>1?'s':''} toegevoegd!`;}
@@ -974,7 +1091,7 @@ async function uploadEditPhoto(carId,fileInput){
   if(ep)ep.classList.add('open');
 }
 
-function saveEdit(id){
+async function saveEdit(id){
   const i=cars.findIndex(c=>c.id===id);if(i<0)return;
   cars[i]={...cars[i],
     make:document.getElementById('em-'+id).value.trim()||cars[i].make,
@@ -983,8 +1100,10 @@ function saveEdit(id){
     km:document.getElementById('ek-'+id).value.trim()||cars[i].km,
     fuel:document.getElementById('ef-'+id).value,
     price:+document.getElementById('ep2-'+id).value||cars[i].price,
+    desc:(document.getElementById('ed-'+id)?document.getElementById('ed-'+id).value.trim():null)??cars[i].desc??'',
   };
-  saveCars();renderAll();
+  renderAll();
+  await saveCar(cars[i]);
 }
 function renderAll(){
   renderGrid('homeGrid',cars.filter(c=>!c.sold).slice(0,3));
@@ -1087,14 +1206,15 @@ function movePhoto(arr,fromIdx,dir,onReorder){
   onReorder();
 }
 
-function moveEditPhoto(carId,fromIdx,dir){
+async function moveEditPhoto(carId,fromIdx,dir){
   const i=cars.findIndex(c=>c.id===carId);if(i<0)return;
   const imgs=getImgs(cars[i]);
   const toIdx=fromIdx+dir;
   if(toIdx<0||toIdx>=imgs.length)return;
   const tmp=imgs[fromIdx];imgs[fromIdx]=imgs[toIdx];imgs[toIdx]=tmp;
   cars[i].imgs=imgs;cars[i].img=imgs[0]||'';
-  saveCars();renderAdminList();
+  await sbFetch('cars?id=eq.'+carId,'PATCH',{imgs:imgs,img:imgs[0]||''});
+  renderAdminList();
   const ep=document.getElementById('ep-'+carId);if(ep)ep.classList.add('open');
 }
 
@@ -1134,7 +1254,7 @@ function addNewCarPhotoUrl(){
   const input=document.getElementById('aImg');
   const url=input.value.trim();
   if(!url)return;
-  if(newCarImgs.length>=10){alert('Maximaal 10 foto\'s per auto.');return;}
+  if(newCarImgs.length>=30){alert('Maximaal 30 foto\'s per auto.');return;}
   newCarImgs.push(url);
   input.value='';
   renderNewCarPhotos();
@@ -1154,7 +1274,7 @@ async function handleUpload(){
   prog.style.display='block';prog.style.color='var(--muted)';
   let done=0;
   for(const file of files){
-    if(newCarImgs.length>=10){prog.style.color='#c05050';prog.textContent='Maximaal 10 foto\'s bereikt.';break;}
+    if(newCarImgs.length>=30){prog.style.color='#c05050';prog.textContent='Maximaal 30 foto\'s bereikt.';break;}
     try{
       prog.textContent=`Uploaden ${done+1}/${files.length}...`;
       const url=await uploadToImgur(file);
@@ -1166,29 +1286,30 @@ async function handleUpload(){
   document.getElementById('photoFile').value='';
 }
 
-function addCar(){
+async function addCar(){
   const make=document.getElementById('aMake').value.trim();
   const model=document.getElementById('aModel').value.trim();
   const price=document.getElementById('aPrice').value;
   if(!make||!model||!price){alert('Vul minimaal merk, model en prijs in.');return;}
   const urlInput=document.getElementById('aImg').value.trim();
   if(urlInput&&!newCarImgs.includes(urlInput))newCarImgs.push(urlInput);
-  cars.unshift({id:Date.now(),
-    make,model,
+  const desc=document.getElementById('aDesc')?document.getElementById('aDesc').value.trim():'';
+  const newCar={id:Date.now(),make,model,
     year:document.getElementById('aYear').value.trim()||'—',
     km:document.getElementById('aKm').value.trim()||'—',
     fuel:document.getElementById('aFuel').value,
-    price:+price,
-    imgs:[...newCarImgs],
-    img:newCarImgs[0]||'',
-    sold:false
-  });
-  saveCars();renderAll();
-  ['aMake','aModel','aYear','aKm','aPrice','aImg'].forEach(id=>document.getElementById(id).value='');
-  newCarImgs=[];
-  renderNewCarPhotos();
+    price:+price,desc,
+    imgs:[...newCarImgs],img:newCarImgs[0]||'',sold:false};
+  // Optimistic UI
+  cars.unshift(newCar);
+  renderAll();
+  ['aMake','aModel','aYear','aKm','aPrice','aImg','aDesc'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  newCarImgs=[];renderNewCarPhotos();
   document.getElementById('uploadProgress').style.display='none';
   document.getElementById('photoFile').value='';
+  // Save to Supabase
+  const newId=await saveCar(newCar);
+  if(newId){newCar.id=newId;cars[0]=newCar;renderAll();}
 }
 
 function previewImg(){
