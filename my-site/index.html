@@ -1276,6 +1276,9 @@ function addNewCarPhotoUrl(){
   renderNewCarPhotos();
 }
 
+const CLOUDINARY_CLOUD='dgjnjvuli';
+const CLOUDINARY_PRESET='nxtmotion_upload'; // unsigned preset name
+
 async function compressImage(file){
   return new Promise(resolve=>{
     const reader=new FileReader();
@@ -1283,31 +1286,34 @@ async function compressImage(file){
       const img=new Image();
       img.onload=function(){
         const canvas=document.createElement('canvas');
-        // Max width 1400px, keep aspect ratio
-        const MAX=1400;
+        const MAX=1600;
         let w=img.width,h=img.height;
         if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}
         canvas.width=w;canvas.height=h;
-        const ctx=canvas.getContext('2d');
-        ctx.drawImage(img,0,0,w,h);
-        canvas.toBlob(blob=>{
-          resolve(blob||file);
-        },'image/jpeg',0.82); // 82% quality JPEG
+        canvas.getContext('2d').drawImage(img,0,0,w,h);
+        canvas.toBlob(blob=>resolve(blob||file),'image/jpeg',0.85);
       };
       img.src=e.target.result;
     };
     reader.readAsDataURL(file);
   });
 }
-async function uploadToImgur(file){
-  // Compress before upload for faster loading
+
+async function uploadPhoto(file){
   const compressed=await compressImage(file);
-  const fd=new FormData();fd.append('image',compressed);
-  const res=await fetch('https://api.imgur.com/3/image',{method:'POST',headers:{Authorization:'Client-ID 546c25a59c58ad7'},body:fd});
+  const fd=new FormData();
+  fd.append('file',compressed);
+  fd.append('upload_preset',CLOUDINARY_PRESET);
+  // Cloudinary auto-optimizes, resizes and serves via CDN
+  const res=await fetch('https://api.cloudinary.com/v1_1/'+CLOUDINARY_CLOUD+'/image/upload',{method:'POST',body:fd});
   const data=await res.json();
-  if(!data.success)throw new Error('Upload failed');
-  return data.data.link;
+  if(!data.secure_url)throw new Error('Upload failed: '+JSON.stringify(data));
+  // Return optimized URL with auto quality and format
+  return data.secure_url.replace('/upload/','/upload/q_auto,f_auto,w_1400/');
 }
+
+// Keep uploadToImgur as alias for backward compat
+async function uploadToImgur(file){return uploadPhoto(file);}
 async function handleUpload(){
   const files=Array.from(document.getElementById('photoFile').files);
   if(!files.length)return;
