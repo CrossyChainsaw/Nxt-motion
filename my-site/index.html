@@ -851,6 +851,7 @@ async function deleteCar(id){
   if(!confirm('Weet je zeker dat je deze auto wilt verwijderen?'))return;
   await sbFetch('cars?id=eq.'+id,'DELETE');
   cars=cars.filter(c=>c.id!==id);
+  localStorage.setItem('nxt_cars_cache',JSON.stringify(cars));
   renderAll();
 }
 
@@ -1044,11 +1045,6 @@ function toggleEdit(id){
 }
 function toggleSold(id){const i=cars.findIndex(c=>c.id===id);if(i<0)return;cars[i].sold=!cars[i].sold;renderAll();}
 
-function deleteCar(id){
-  if(!confirm('Weet je zeker dat je deze auto wilt verwijderen?'))return;
-  cars=cars.filter(c=>c.id!==id);
-  renderAll();
-}
 
 function getImgs(car){return Array.isArray(car.imgs)?car.imgs:(car.img?[car.img]:[]);}
 
