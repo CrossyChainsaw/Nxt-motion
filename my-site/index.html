@@ -784,6 +784,7 @@ async function sbFetch(path,method,body){
     method:method||'GET',
     headers:{
       'apikey':SUPABASE_KEY,
+      'Authorization':'Bearer '+SUPABASE_KEY,
       'Content-Type':'application/json',
       'Prefer':'return=representation'
     }
